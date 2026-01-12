@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function showForm(){
+    public function showForm()
+    {
         return view('auth.login');
     }
 
     // login action
-    public function login(Request $request){
+    public function login(Request $request)
+    {
 
         $request->validate([
             'login' => 'required|string',
@@ -22,7 +24,7 @@ class AuthenticatedSessionController extends Controller
 
 
         $credentials = ['login' => $request->input('login'), 'password' => $request->input('mdp')];
-        $type = User::where('login', $request->login, $request->input('login'))->value('type');
+        $type = User::where('login', $request->input('login'))->value('type');
 
         if (Auth::attempt($credentials) && ($type == NULL)) {
             Auth::logout();
@@ -38,17 +40,17 @@ class AuthenticatedSessionController extends Controller
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
 
-                $request->session()->flash('etat','Connexion réussie');
+                session()->flash('etat', 'Connexion réussie');
 
-                $type = User::where('login', $request->login)->value('type');
+                $type = User::where('login', $request->input('login'))->value('type');
 
-                if($type == 'admin') {
+                if ($type == 'admin') {
                     return redirect()->intended('/admin');
 
-                } else if ($type == 'gestionnaire'){
+                } else if ($type == 'gestionnaire') {
                     return redirect()->intended('/gestionnaire');
 
-                } elseif($type =='enseignant'){
+                } elseif ($type == 'enseignant') {
                     return redirect()->intended('/enseignant');
 
                 }
@@ -65,7 +67,8 @@ class AuthenticatedSessionController extends Controller
 
 
     // logout action
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
 
         $request->session()->invalidate();

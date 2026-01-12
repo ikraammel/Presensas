@@ -4,31 +4,126 @@
 
 @section('contents')
 
-    @include('admin.partials.navbar-admin')
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tableau de bord - Administrateur</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="bi bi-download fa-sm text-white-50"></i> Générer Rapport
+        </a>
+    </div>
 
-   <div class="d-flex flex-column h-90">
-    <div class="position-relative">
-        <div class="container-sm mt-4">
-            <p>Page d'accueil administrateur.</p>
-            <p class="text-start">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies blandit mi. Aenean mollis nunc neque, non ornare quam pharetra vel. Integer lacinia ipsum ultrices risus tempor, non fringilla tellus pellentesque. Maecenas eget viverra turpis. Phasellus sed dapibus mi, sit amet condimentum ex. Proin bibendum, ipsum at sagittis iaculis, ante libero efficitur mi, ut fermentum nibh nibh et sem. Vestibulum feugiat nulla in placerat laoreet. In nunc eros, tempus et convallis quis, ultricies vitae tellus. Suspendisse sit amet nisi commodo, condimentum arcu ut, volutpat purus.
-                Nulla faucibus dapibus odio sed interdum. Donec ullamcorper ipsum ex, vel molestie mauris tincidunt sit amet. Cras a nisl turpis. Aliquam erat volutpat. In eu hendrerit ligula. Nam purus magna, rutrum ut hendrerit sit amet, tempus non elit. Ut vitae tellus in enim porta molestie. Nunc pretium diam eu massa tempus porttitor. Praesent aliquet blandit sem quis volutpat. Suspendisse potenti. Maecenas pretium laoreet nisl a placerat. Nunc vulputate dolor arcu, sit amet feugiat leo pellentesque sit amet. Fusce mi dolor, pellentesque ac tellus ut, rutrum posuere lorem. Praesent metus enim, malesuada lobortis dui sit amet, suscipit congue mauris. Aliquam vel libero egestas, tempor leo in, eleifend nisl. Sed sit amet imperdiet libero, at vehicula eros.
-                Phasellus sagittis nulla nulla, quis semper nulla egestas condimentum. Phasellus semper eget nulla a dignissim. Nulla facilisi. Curabitur viverra ex non orci sodales mattis. Aenean facilisis, lacus vitae tincidunt gravida, enim turpis ornare magna, et egestas tortor ligula eget sem. Nulla libero libero, efficitur eu lacus eget, euismod porta urna. Phasellus nunc tellus, vestibulum sed tellus vel, sodales lobortis lacus.
-                Donec et orci mi. Aenean sagittis sagittis dapibus. Phasellus vel elit nec tellus scelerisque maximus malesuada eu turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam aliquet quam eu molestie vulputate. Nulla imperdiet rhoncus risus eu volutpat. Nullam viverra pharetra condimentum. Maecenas eu posuere sapien, vel posuere purus. Morbi ornare sollicitudin leo, non tempus ipsum scelerisque nec. Maecenas quis fringilla enim. Etiam bibendum luctus odio eget cursus. Nulla luctus, odio et tincidunt sagittis, eros enim mollis ligula, feugiat iaculis nisl nulla commodo enim.
-                Suspendisse tincidunt, est ac accumsan sodales, nisi dolor lacinia leo, aliquet consectetur arcu est quis nisi. Sed dignissim ac nunc a blandit. Sed id auctor felis, tincidunt condimentum lacus. Sed at erat ut turpis posuere rutrum a sit amet sapien. Integer vestibulum felis sit amet iaculis auctor. Curabitur scelerisque tempus lacus, eget lacinia felis fringilla vel. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas in ultricies mauris, id pulvinar lacus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent porta arcu vitae dictum aliquet. Suspendisse est diam, efficitur laoreet sollicitudin in, lobortis at augue. Sed felis tellus, commodo sed pulvinar vel, tristique ut ex. Vivamus finibus elit sed augue placerat, viverra iaculis diam pulvinar. Proin maximus arcu sed scelerisque tempor. Vivamus porta vestibulum faucibus. Vivamus ac nulla risus.
-                In hac habitasse platea dictumst. Cras interdum lacinia sem, ut varius ante sodales non. Vestibulum rutrum pretium ultrices. Nunc sed venenatis est. Aenean suscipit tellus at neque eleifend, sit amet feugiat tortor rutrum. Maecenas eros ligula, sollicitudin vel lobortis id, venenatis et tellus. Quisque fringilla a lacus nec accumsan. Cras consequat ipsum nec augue luctus vulputate.
-                Integer sed leo pretium, dapibus odio at, scelerisque ante. Quisque massa mauris, egestas eget aliquam quis, aliquet eu metus. Curabitur sagittis nunc ac ultrices eleifend. Curabitur rhoncus mauris enim, ac dignissim risus sodales non. Maecenas et elementum justo, sit amet tempus dui. Suspendisse dictum lectus mi, ut dapibus arcu condimentum et. Etiam tincidunt lorem non ex cursus, eu tincidunt est varius. Nulla tristique mollis lorem vel dictum. Fusce venenatis sed elit ut volutpat. Integer tincidunt, tellus quis pretium ultricies, libero ante elementum libero, et dictum urna nulla a sapien. Nullam dignissim vel quam id cursus. Donec accumsan sit amet nisi non pretium. Suspendisse ut leo sagittis erat imperdiet scelerisque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam eu augue vitae sapien blandit iaculis vitae sed eros. Aliquam erat volutpat.
-                Fusce nec mollis dolor. Curabitur maximus venenatis tristique. Phasellus ipsum felis, sollicitudin vel sapien eget, pretium pretium nunc. Integer rhoncus libero nec dictum tempus. Morbi commodo diam id aliquam hendrerit. Aenean ut lorem vel tellus malesuada cursus quis eu ligula. Nulla non volutpat justo. Nulla facilisi. Fusce scelerisque, lacus rhoncus volutpat hendrerit, libero quam pharetra tortor, in pellentesque est diam eu nibh. Maecenas eu accumsan est, non tristique dui. Vivamus nec gravida neque. Curabitur dictum nisi id est luctus feugiat. Sed vel nulla dignissim, pulvinar nisl sed, congue massa. Proin pharetra lorem lectus, sit amet consectetur eros scelerisque ac. Donec hendrerit a nisi vestibulum tincidunt.
-                Praesent imperdiet at ex et rhoncus. Aenean sodales volutpat ex, quis varius ante sagittis nec. Maecenas vitae massa tempus, convallis justo et, ullamcorper tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum nec sapien eu mi facilisis ullamcorper tempus ac purus. Mauris vulputate orci nec sem mollis viverra. Nam in turpis est. Curabitur non ligula consectetur, consequat mauris in, volutpat orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec lacinia justo eu tincidunt convallis. Sed posuere elementum ex eu dignissim. In aliquet posuere massa, id mattis tellus vulputate sed. Aliquam in gravida elit.
-                Nulla bibendum faucibus semper. Vestibulum dapibus turpis rutrum, sodales urna non, dapibus felis. Vestibulum feugiat ligula ut finibus pretium. Integer vel ipsum lorem. Ut justo orci, sagittis ut luctus quis, porttitor eu tellus. Quisque vitae dui a risus aliquam sollicitudin. In mi neque, aliquam a enim at, varius feugiat ipsum. Integer urna augue, malesuada et rutrum id, faucibus et metus. Mauris accumsan eros lectus, nec auctor sem cursus quis. Sed dapibus faucibus viverra. Aliquam erat volutpat.
+    <!-- Content Row -->
+    <div class="row">
 
-            </p>
+        <!-- Total Students Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Étudiants</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">450</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people fa-2x text-gray-300" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Modules Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Modules</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-book fa-2x text-gray-300" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seances Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Séances Programmées
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">25</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-calendar-event fa-2x text-gray-300" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Taux de Présence</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">88.6%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-graph-up fa-2x text-gray-300" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Content Row -->
+    <div class="row">
 
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Aperçu des Absences</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div
+                        style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-radius: 5px;">
+                        <p class="text-muted">Graphique des absences (Simulation)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
+        <!-- Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Statut des Absences</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div
+                        style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-radius: 5px;">
+                        <p class="text-muted">Diagramme</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection

@@ -1,45 +1,65 @@
 @extends('modele')
 
-@section('title', 'SignUp')
+@section('title', 'Inscription - Présensas')
 
 @section('contents')
-    <div class="center">
-        <h1>SignUp</h1>
-        <form method="post">
-            <div class="txt_field">
-                <input type="text" name="login" value="{{old('login')}}" required>
-                <span></span>
-                <label> Login </label>
+    <div class="container auth-container">
+        <div class="auth-card">
+            <div class="brand-logo">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span class="brand-text">PRÉSENSAS</span>
             </div>
 
-            <div class="txt_field">
-                <input type="text" name="nom" value="{{old('nom')}}" required>
-                <span></span>
-                <label> Nom </label>
-            </div>
+            <p class="auth-subtitle">Créez votre compte pour accéder à la plateforme</p>
 
-            <div class="txt_field">
-                <input type="text" name="prenom" value="{{old('prenom')}}" required>
-                <span></span>
-                <label> Prénom </label>
-            </div>
+            <form method="post" action="{{ route('register') }}">
+                @csrf
 
-            <div class="txt_field">
-                <input type="password" name="mdp" required>
-                <span></span>
-                <label> password </label>
-            </div>
+                <!-- Login (Email/Username) -->
+                <div class="mb-3">
+                    <label for="login" class="form-label">Login</label>
+                    <input type="text" class="form-control" name="login" id="login" value="{{ old('login') }}" required
+                        placeholder="Choisissez un identifiant">
+                </div>
 
-            <div class="txt_field">
-                <input type="password" name="mdp_confirmation" required>
-                <span></span>
-                <label>Confirmation password </label>
-            </div>
+                <div class="row">
+                    <!-- Nom -->
+                    <div class="col-md-6 mb-3">
+                        <label for="nom" class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" id="nom" value="{{ old('nom') }}" required
+                            placeholder="Votre nom">
+                    </div>
 
-            <input type="submit" value="S'inscrire">
-            @csrf
-        </form>
+                    <!-- Prénom -->
+                    <div class="col-md-6 mb-3">
+                        <label for="prenom" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" name="prenom" id="prenom" value="{{ old('prenom') }}"
+                            required placeholder="Votre prénom">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="mdp" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" name="mdp" id="mdp" required
+                        placeholder="Créer un mot de passe">
+                </div>
+
+                <!-- Password Confirmation -->
+                <div class="mb-3">
+                    <label for="mdp_confirmation" class="form-label">Confirmer le mot de passe</label>
+                    <input type="password" class="form-control" name="mdp_confirmation" id="mdp_confirmation" required
+                        placeholder="Confirmer votre mot de passe">
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary-custom mt-2">S'inscrire</button>
+
+                <!-- Footer Links -->
+                <div class="footer-links">
+                    <p>Déjà membre ? <a href="{{ route('login') }}">Se connecter</a></p>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection
-
-

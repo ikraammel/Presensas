@@ -12,35 +12,40 @@ class User extends Authenticatable
 {
     use HasFactory;
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
     protected $hidden = ['mdp'];
 
-    protected $fillable = ['login', 'nom', 'prenom','mdp', 'type'];
+    protected $fillable = ['login', 'nom', 'prenom', 'mdp', 'type'];
 
     protected $attributes = [
         'type' => 'user'
     ];
 
 
-    public function getAuthPassword(){
+    public function getAuthPassword()
+    {
         return $this->mdp;
     }
 
-    public function cours(){
+    public function cours()
+    {
         return $this->belongsToMany(Cours::class, 'cours_users', 'user_id', 'cours_id');
     }
 
-    public function isAdmin(){
-        return $this->type =='admin';
+    public function isAdmin()
+    {
+        return $this->type == 'admin';
     }
 
-    public function isGestionnaire(){
-        return $this->type =='gestionnaire' || $this->type =='admin';
+    public function isGestionnaire()
+    {
+        return $this->type == 'gestionnaire' || $this->type == 'admin';
     }
 
-    public function isEnseignant() {
-        return $this->type =='enseignant' || $this->type =='admin';
+    public function isEnseignant()
+    {
+        return $this->type == 'enseignant' || $this->type == 'admin';
     }
 
 

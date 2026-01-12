@@ -1,91 +1,193 @@
 <!doctype html>
 <html lang="fr">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@yield('title')</title>
 
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-        <!-- Boostrap ICONS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@yield('title')</title>
 
-        <!-- CSS perso -->
-        <link href="{{asset('style.css')}}" rel="stylesheet" type="text/css"/>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <!-- Boostrap ICONS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
-        <!-- Redirection des pages -->
-        @yield('redirect')
-    </head>
-    <body class="d-flex flex-column min-vh-100">
-            <!-- Messages Flash -->
-            @section('Messages_flash')
-                @if(session()->has('etat'))
-                    <div class="position-relative" style="z-index:1;">
-                        <div class="position-absolute top-0 start-50 translate-middle-x">
-                            <div class="alert alert-success d-flex align-items-center" role="alert">
-                                <svg class="bi flex-shrink-0 me-2" width="40" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/>
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                                </svg>
-                                <div>
-                                    <p class="etat">
-                                        {{session()->get('etat')}} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+    <!-- CSS perso -->
+    <link href="{{asset('style.css')}}" rel="stylesheet" type="text/css" />
+
+    <!-- Redirection des pages -->
+    @yield('redirect')
+</head>
+
+<body id="page-top">
+    <!-- Messages Flash -->
+    @section('Messages_flash')
+    @if(session()->has('etat'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+            <div class="toast show align-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{session()->get('etat')}}
                     </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+    @show
 
-                @endif
-            @show
+    <!-- Page Wrapper -->
+    <div id="wrapper">
 
-            <!--error validation-->
-            @section('validation')
-                @if ($errors->any())
-                    <div class="position-relative" style="z-index:1;">
-                        <div class="position-absolute top-0 start-50 translate-middle-x">
-                            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-                                </svg>
-                                <div>
-                                    <ul>
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error}}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav" id="accordionSidebar">
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('home') }}">
+                <div class="sidebar-brand-icon">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">PrésEnsas</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ route('home') }}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Interface
+            </div>
+
+            <!-- Nav Item - Students -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Étudiants</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Teachers -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-person-badge-fill"></i>
+                    <span>Enseignants</span>
+                </a>
+            </li>
+
+            <!-- Nav Item - Modules -->
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-book-fill"></i>
+                    <span>Modules</span>
+                </a>
+            </li>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="topbar mb-4 static-top">
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Rechercher..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <button class="btn btn-primary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
                         </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @auth
+                                    <span
+                                        class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nom ?? 'Utilisateur' }}</span>
+                                @endauth
+                                <img class="img-profile rounded-circle"
+                                    src="https://ui-avatars.com/api/?name={{ Auth::user()->nom ?? 'User' }}&background=random"
+                                    style="height: 2rem; width: 2rem;">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2 text-gray-400"></i>
+                                    Profil
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ route('logout') }}">
+                                    <i class="bi bi-box-arrow-right me-2 text-gray-400"></i>
+                                    Déconnexion
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    @yield('contents')
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white mt-auto">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>&copy; Présensas {{ date('Y') }}</span>
                     </div>
-                @endif
-            @show
+                </div>
+            </footer>
+            <!-- End of Footer -->
 
-        <!-- Contents Page-->
-            <main class="flex-grow-1">
-                @yield('contents')
-            </main>
+        </div>
+        <!-- End of Content Wrapper -->
 
-        <!------------- Footer ------------------->
-            @section('footer')
-                @auth
-                    <footer class="footer bg-light text-muted py-3 border-top">
-                        <div class="container d-flex justify-content-between align-items-center flex-wrap">
-                            <div>
-                                Vous êtes connecté en tant que <strong>{{ Auth::user()->nom }} {{ Auth::user()->prenom }}</strong> |
-                                {{ Auth::user()->type }}
-                                <a class="btn btn-outline-secondary btn-sm ms-2" href="{{ route('logout') }}">Déconnexion</a>
-                            </div>
-                            <div class="text-end">
-                                &copy; <script>document.write(new Date().getFullYear());</script> Projet
-                            </div>
-                        </div>
-                    </footer>
-                @endauth
-            @show
+    </div>
+    <!-- End of Page Wrapper -->
 
-            <!-- Bootstrap Bundle avec Popper -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    </body>
+    <!-- Bootstrap Bundle avec Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>
