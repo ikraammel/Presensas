@@ -16,10 +16,15 @@ class EtudiantController extends Controller
     {
         $user = Auth::user();
 
-        // Pour l'étudiant, on récupère ses cours via la table cours_etudiants
-        // Pour l'instant, on retourne un dashboard simple
+        // Trouver l'étudiant correspondant (via nom/prénom)
+        $etudiant = \App\Models\Etudiants::where('nom', $user->nom)
+            ->where('prenom', $user->prenom)
+            ->with(['groupe.user']) // Charger le groupe et son prof
+            ->first();
+
         return view('etudiant.home', [
             'user' => $user,
+            'etudiant' => $etudiant
         ]);
     }
 

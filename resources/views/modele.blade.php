@@ -106,6 +106,14 @@
                         </a>
                     </li>
 
+                    <!-- Nav Item - Classes -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.groupes.index') }}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Classes</span>
+                        </a>
+                    </li>
+
                     <!-- Divider -->
                     <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
 

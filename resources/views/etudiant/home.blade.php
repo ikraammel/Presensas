@@ -74,4 +74,53 @@
         </div>
     </div>
 
+    @if(isset($etudiant) && $etudiant->groupe)
+        <div class="row">
+            <!-- Ma Classe Card -->
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card stat-card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Ma Classe</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $etudiant->groupe->nom }}</div>
+                                <div class="text-muted small">{{ $etudiant->groupe->description }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-people-fill fa-2x text-gray-300" style="font-size: 2rem; color: #dddfeb;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mon Professeur Card -->
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card stat-card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Professeur Principal</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ $etudiant->groupe->user->nom ?? 'Non assigné' }}
+                                    {{ $etudiant->groupe->user->prenom ?? '' }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="bi bi-person-badge-fill fa-2x text-gray-300"
+                                    style="font-size: 2rem; color: #dddfeb;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @else
+        <div class="alert alert-warning">
+            Vous n'êtes assigné à aucune classe pour le moment.
+        </div>
+    @endif
+
 @endsection
