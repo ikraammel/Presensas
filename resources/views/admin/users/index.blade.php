@@ -19,6 +19,7 @@
                     <li><a class="dropdown-item" href="{{route('admin.users.indexAll')}}">Tous</a></li>
                     <li><a class="dropdown-item" href="{{route('admin.users.indexEnseignant')}}">Enseignant</a></li>
                     <li><a class="dropdown-item" href="{{route('admin.users.indexGestionnaire')}}">Gestionnaire</a></li>
+                    <li><a class="dropdown-item" href="{{route('admin.users.indexEtudiant')}}">Étudiant</a></li>
                     <li><a class="dropdown-item" href="{{route('admin.users.index')}}">Type null</a></li>
                 </ul>
             </div>

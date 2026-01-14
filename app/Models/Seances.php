@@ -13,7 +13,7 @@ class Seances extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'cours_id', 'date_debut', 'date_fin'];
+    protected $fillable = ['id', 'cours_id', 'date_debut', 'date_fin', 'type', 'qr_token', 'qr_expires_at'];
 
     public function etudiants(){
         return $this->belongsToMany(Etudiants::class, 'presences', 'etudiant_id', 'seance_id');

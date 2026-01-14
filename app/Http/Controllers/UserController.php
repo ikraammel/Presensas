@@ -33,6 +33,12 @@ class UserController extends Controller
         return view('admin.users.index', ['users'=>$user]);
     }
 
+    //filtre etudiant
+    public function showEtudiant(){
+        $user = User::where('type', '=', 'etudiant')->get();
+        return view('admin.users.index', ['users'=>$user]);
+    }
+
     //Recherche par nom et prenom pour l'admin
     public function recherche(){
         $q = request()->input('q');
@@ -95,38 +101,31 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         if($request->has('Accepter')){
             $validated = $request->validate([
-                'nom' => 'required|alpha|max:50',
-                'prenom' => 'required|alpha|max:50',
-                'type' => 'required|string'
+                'nom' => 'required|string|max:50',
+                'prenom' => 'required|string|max:50',
             ]);
 
             $user->nom = $validated['nom'];
             $user->prenom = $validated['prenom'];
-
-            if ($validated['type'] == 'admin' && empty($request->input('admin'))) {
-                $user->type = $request->input('admin');
-            } else if ($validated['type'] == 'enseignant' && empty($request->input('enseignant'))) {
-                $user->type = $request->input('enseignant');
-            } elseif ($validated['type'] == 'gestionnaire' && empty($request->input('gestionnaire'))) {
-                $user->type = $request->input('gestionnaire');
-            } else {
-                return back()->withErrors([
-                    'errors' => 'Erreur: action refusée'
-                ]);
+            // Valider le compte en utilisant le type demandé
+            if ($user->type_demande) {
+                $user->type = $user->type_demande;
+                $user->type_demande = null; // Nettoyer le champ temporaire
             }
-            $user->type = $validated['type'];
             $user->save();
-            $request->session()->flash('etat', 'modification effectuéé. Utilisateur validé !');
-            //return view('mod_form',['nom' => $user]);
+            
+            $request->session()->flash('etat', 'Utilisateur validé avec succès !');
+            return redirect()->route('admin.users.index');
 
         }elseif($request->has('Refuser')) {
-            $user->delete($id);
+            $user->delete();
             $request->session()->flash('etat', 'Refusé: Utilisateur supprimé');
+            return redirect()->route('admin.users.index');
 
         }else{
             $request->session()->flash('etat', 'Aucune action effectuée' );
+            return redirect()->route('admin.users.index');
         }
-        return redirect()->route('admin.users.index', ['id'=>$user->id]);
     }
 
     //supprimer user

@@ -13,7 +13,7 @@ class Etudiants extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id','nom','prenom','noet', 'created_at', 'updated_at'];
+    protected $fillable = ['id','nom','prenom','noet', 'cne', 'groupe_id', 'created_at', 'updated_at'];
 
 
     public function cours(){
@@ -22,5 +22,10 @@ class Etudiants extends Model
 
     public function seances(){
         return $this->belongsToMany(Seances::class, 'presences', 'etudiant_id', 'seance_id');
+    }
+
+    public function groupe()
+    {
+        return $this->belongsTo(Groupe::class);
     }
 }

@@ -28,4 +28,11 @@ class Cours extends Model
     public function seances(){
         return $this->hasMany(Seances::class);
     }
-}
+
+    public function documents(){
+        return $this->hasMany(Document::class);
+    }
+
+    public function annonces(){
+        return $this->hasMany(Annonce::class);
+    }

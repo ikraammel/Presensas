@@ -16,7 +16,7 @@ class User extends Authenticatable
 
     protected $hidden = ['mdp'];
 
-    protected $fillable = ['login', 'nom', 'prenom', 'mdp', 'type'];
+    protected $fillable = ['login', 'nom', 'prenom', 'mdp', 'type', 'type_demande'];
 
     protected $attributes = [
         'type' => 'user'
@@ -48,5 +48,9 @@ class User extends Authenticatable
         return $this->type == 'enseignant' || $this->type == 'admin';
     }
 
+    public function isEtudiant()
+    {
+        return $this->type == 'etudiant';
+    }
 
 }

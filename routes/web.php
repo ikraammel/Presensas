@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\CoursController;
 use App\Http\Controllers\EnseignantController;
@@ -35,11 +36,12 @@ Route::view('/home','home')->middleware('auth')
 
 /*===================== Admin ============================*/
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::view('/admin', 'admin.home')->name('admin.home');
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
     Route::get('/admin/users/index', [UserController::class, 'show'])->name('admin.users.index');
     Route::get('/admin/users/indexAll', [UserController::class, 'showAll'])->name('admin.users.indexAll');
     Route::get('/admin/users/indexGestionnaire', [UserController::class, 'showGestionnaire'])->name('admin.users.indexGestionnaire');
     Route::get('/admin/users/indexEnseignant', [UserController::class, 'showEnseignant'])->name('admin.users.indexEnseignant');
+    Route::get('/admin/users/indexEtudiant', [UserController::class, 'showEtudiant'])->name('admin.users.indexEtudiant');
     Route::get('/admin/users/search', [UserController::class, 'recherche'])->name('admin.users.search');
     Route::get('/admin/users/edit/{id}', [UserController::class, 'editForm'])->name('admin.users.edit');
     Route::post('/admin/users/edit/{id}', [UserController::class, 'edit'])->name('admin.users.edit');

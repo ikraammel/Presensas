@@ -22,15 +22,23 @@
                             <input type="text" class="form-control" name="prenom" id="formGroupExampleInput2" placeholder="prenom.." value="{{old('prenom',$users->prenom)}}">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="formGroupExampleInput2" class="form-label">Type</label>
-                            <select name="type">
-                                <option value="">--Veuillez choisir un type--</option>
-                                <option value="admin">Administrateur</option>
-                                <option value="enseignant">Enseignant</option>
-                                <option value="gestionnaire">Gestionnaire</option>
-                            </select>
-                        </div>
+                        @if($users->type_demande)
+                            <div class="mb-3">
+                                <label class="form-label">Type demandé</label>
+                                <div class="form-control bg-light">
+                                    @if($users->type_demande == 'etudiant')
+                                        Étudiant
+                                    @elseif($users->type_demande == 'enseignant')
+                                        Enseignant
+                                    @elseif($users->type_demande == 'gestionnaire')
+                                        Gestionnaire
+                                    @else
+                                        {{ $users->type_demande }}
+                                    @endif
+                                </div>
+                                <small class="text-muted">Le type sera automatiquement attribué lors de la validation</small>
+                            </div>
+                        @endif
 
                         <input class="btn btn-success w-auto" type="submit" name="Accepter" value="Accepter">
                         <input class="btn btn-danger w-auto" type="submit" name="Refuser" value="Refuser">

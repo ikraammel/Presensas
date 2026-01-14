@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -22,47 +23,42 @@ class AuthenticatedSessionController extends Controller
             'mdp' => 'required|string'
         ]);
 
+        // Récupérer l'utilisateur par le champ login
+        $user = User::where('login', $request->input('login'))->first();
 
-        $credentials = ['login' => $request->input('login'), 'password' => $request->input('mdp')];
-        $type = User::where('login', $request->input('login'))->value('type');
-
-        if (Auth::attempt($credentials) && ($type == NULL)) {
-            Auth::logout();
-            $request->session()->invalidate();
-
-            $request->session()->regenerateToken();
-
-            return back()->withErrors([
-                'login' => 'Votre compte n\'a pas encore été validé.',
-            ]);
-        } else {
-
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
-
-                session()->flash('etat', 'Connexion réussie');
-
-                $type = User::where('login', $request->input('login'))->value('type');
-
-                if ($type == 'admin') {
-                    return redirect()->intended('/admin');
-
-                } else if ($type == 'gestionnaire') {
-                    return redirect()->intended('/gestionnaire');
-
-                } elseif ($type == 'enseignant') {
-                    return redirect()->intended('/enseignant');
-
-                }
-                return redirect()->route('login');
-
+        // Vérifier si l'utilisateur existe et si le mot de passe est correct
+        if ($user && Hash::check($request->input('mdp'), $user->mdp)) {
+            
+            // Vérifier si le compte est validé (type n'est pas null)
+            if ($user->type == NULL) {
+                return back()->withErrors([
+                    'login' => 'Votre compte n\'a pas encore été validé.',
+                ]);
             }
 
-            return back()->withErrors([
-                'login' => 'Les informations de connexion sont incorrectes.',
-            ]);
+            // Connecter l'utilisateur
+            Auth::login($user);
+            $request->session()->regenerate();
 
+            session()->flash('etat', 'Connexion réussie');
+
+            // Rediriger selon le type
+            if ($user->type == 'admin') {
+                return redirect()->intended('/admin');
+            } else if ($user->type == 'gestionnaire') {
+                return redirect()->intended('/gestionnaire');
+            } elseif ($user->type == 'enseignant') {
+                return redirect()->intended('/enseignant');
+            } elseif ($user->type == 'etudiant') {
+                return redirect()->intended('/');
+            }
+            
+            return redirect()->route('home');
         }
+
+        return back()->withErrors([
+            'login' => 'Les informations de connexion sont incorrectes.',
+        ]);
     }
 
 

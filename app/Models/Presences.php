@@ -13,7 +13,7 @@ class Presences extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['etudiant_id', 'seance_id'];
+    protected $fillable = ['etudiant_id', 'seance_id', 'statut', 'justificatif', 'date_enregistrement'];
 
     public function etudiants(){
         return $this->belongsTo(Etudiants::class);

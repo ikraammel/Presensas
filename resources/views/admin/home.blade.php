@@ -4,12 +4,24 @@
 
 @section('contents')
 
+    @include('admin.partials.navbar-admin')
+
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Tableau de bord - Administrateur</h1>
-        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i class="bi bi-download fa-sm text-white-50"></i> Générer Rapport
-        </a>
+        <div>
+            @if(isset($usersNonValides) && $usersNonValides > 0)
+                <a href="{{route('admin.users.index')}}" class="d-inline-block btn btn-sm btn-warning shadow-sm mr-2">
+                    <i class="bi bi-exclamation-triangle fa-sm text-white-50"></i> {{$usersNonValides}} Utilisateur(s) à valider
+                </a>
+            @endif
+            <a href="{{route('admin.users.index')}}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm mr-2">
+                <i class="bi bi-people fa-sm text-white-50"></i> Gérer les Utilisateurs
+            </a>
+            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="bi bi-download fa-sm text-white-50"></i> Générer Rapport
+            </a>
+        </div>
     </div>
 
     <!-- Content Row -->

@@ -21,7 +21,8 @@ class RegisterUserController extends Controller
             'login' => 'required|string|max:255|unique:users',
             'nom'=>'required|string|max:255',
             'prenom'=>'required|string',
-            'mdp' => 'required|string|confirmed'//|min:8',
+            'mdp' => 'required|string|confirmed', //|min:8
+            'type' => 'required|string|in:etudiant,enseignant,gestionnaire',
         ]);
 
         $user = new User();
@@ -29,10 +30,11 @@ class RegisterUserController extends Controller
         $user->nom = $request->nom;
         $user->prenom = $request->prenom;
         $user->mdp = Hash::make($request->mdp);
-        $user->type= null;
+        $user->type_demande = $request->type; // Stocker le type demandé
+        $user->type = null; // Le compte est en attente de validation
         $user->save();
 
-        session()->flash('etat','Ajouté avec succès !');
+        session()->flash('etat','Inscription réussie ! Votre compte est en attente de validation par l\'administrateur.');
 
         //Auth::login($user);
 
