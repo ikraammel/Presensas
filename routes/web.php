@@ -57,6 +57,10 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/cours/edit/{id}', [CoursController::class, 'edit'])->name('admin.cours.edit');
     Route::get('/admin/cours/delete/{id}', [CoursController::class, 'deleteForm'])->name('admin.cours.delete');
     //Route::post('/admin/cours/delete/{id}',[CoursController::class, 'delete'])->name('admin.cours.delete');
+
+    // Affectation d'un module à un enseignant
+    Route::get('/admin/cours/{id}/assign-enseignant', [CoursController::class, 'assignEnseignantForm'])->name('admin.cours.assign-enseignant');
+    Route::post('/admin/cours/{id}/assign-enseignant', [CoursController::class, 'assignEnseignant'])->name('admin.cours.assign-enseignant');
     Route::get('/admin/user/addAdmin', [UserController::class, 'addUserForm'])->name('admin.user.createAdmin');
     Route::post('/admin/user/addAdmin', [UserController::class, 'addUserAdmin'])->name('admin.user.createAdmin');
     Route::get('/admin/user/addEnseignant', [UserController::class, 'addUserForm'])->name('admin.user.createEnseignant');
