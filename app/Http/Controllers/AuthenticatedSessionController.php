@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         // Vérifier si l'utilisateur existe et si le mot de passe est correct
         if ($user && Hash::check($request->input('mdp'), $user->mdp)) {
-            
+
             // Vérifier si le compte est validé (type n'est pas null)
             if ($user->type == NULL) {
                 return back()->withErrors([
@@ -49,14 +49,23 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended('/enseignant');
             } elseif ($user->type == 'etudiant') {
                 return redirect()->intended('/etudiant');
+            } elseif ($user->type == 'gestionnaire') {
+                return redirect()->intended('/gestionnaire');
             }
-            
-            return redirect()->route('home');
-        }
 
-        return back()->withErrors([
-            'login' => 'Les informations de connexion sont incorrectes.',
-        ]);
+            return redirect()->route('home');
+        } else {
+            // Message d'erreur différencié
+            if (!$user) {
+                return back()->withErrors([
+                    'login' => 'Cet identifiant n\'existe pas.',
+                ]);
+            } else {
+                return back()->withErrors([
+                    'login' => 'Le mot de passe est incorrect.',
+                ]);
+            }
+        }
     }
 
 

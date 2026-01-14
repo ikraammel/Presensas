@@ -3,7 +3,6 @@
 @section('title', 'Modifier le cours')
 
 @section('contents')
-    @include('admin.partials.navbar-admin')
     <div class="container-sm mt-4">
         <h3>Voulez-vous supprimer le cours de : {{$cours->intitule}} ?</h3>
         <form action='{{route('admin.cours.delete',['id'=>$cours->id])}}' method="POST">

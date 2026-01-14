@@ -4,8 +4,6 @@
 
 @section('contents')
 
-    @include('admin.partials.navbar-admin')
-
     @unless(empty($users))
         <div class="container-md mt-3">
             <!-----------------------------Btn Back------------------------------>

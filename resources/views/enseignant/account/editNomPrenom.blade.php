@@ -3,9 +3,6 @@
 @section('title', 'Enseignant: Modification du Nom & Prenom')
 
 @section('contents')
-    <!--------------------- NavBar ------------------------------->
-    @include('enseignant.partials.navbar-enseignant')
-
     <!------------------------------Formulaire--------------------------->
     <div class="container-sm mt-4">
         <h3>Formulaire de modifaction du Nom & Prenom - Enseignant</h3>

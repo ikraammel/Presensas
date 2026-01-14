@@ -49,7 +49,8 @@ class UserController extends Controller
 
     //Modifier le mot de passe admin
     public function editForm_Mdp(){
-        return view('admin.account.editMdp');
+        $user = Auth::user();
+        return view('admin.account.editMdp', ['user' => $user]);
     }
 
     //modifier le mot de passe admin
@@ -71,6 +72,11 @@ class UserController extends Controller
 
     //Modifier le nom et prenom de l'admin
     public function editNomPrenom(Request $request, $id){
+        // Vérifier si l'utilisateur a cliqué sur Annuler
+        if($request->has('Annuler')) {
+            return redirect()->route('admin.profil');
+        }
+
         $validated=$request->validate([
            'nom'=>'required|alpha|max:50',
             'prenom'=>'required|string|max:265',
@@ -79,8 +85,8 @@ class UserController extends Controller
         $user->nom=$validated['nom'];
         $user->prenom=$validated['prenom'];
         $user->save();
-        $request->session()->flash('etat', 'la modification a été effectuée avec succès !!!!');
-        return redirect()->route('admin.home',['users' => $user]);
+        $request->session()->flash('etat', 'Vos informations ont été modifiées avec succès !');
+        return redirect()->route('admin.profil');
     }
 
     //Refuser ou accepter un user auto-crée
@@ -109,11 +115,19 @@ class UserController extends Controller
             $user->save();
             
             $request->session()->flash('etat', 'Utilisateur validé avec succès !');
+            // Redirection selon le type d'utilisateur
+            if ($user->type === 'enseignant') {
+                return redirect()->route('admin.enseignants');
+            }
             return redirect()->route('admin.users.index');
 
         }elseif($request->has('Refuser')) {
             $user->delete();
             $request->session()->flash('etat', 'Refusé: Utilisateur supprimé');
+            // Redirection selon le type d'utilisateur
+            if ($user->type === 'enseignant') {
+                return redirect()->route('admin.enseignants');
+            }
             return redirect()->route('admin.users.index');
 
         }else{
@@ -131,12 +145,17 @@ class UserController extends Controller
     //supprimer user
     public function delete(Request $request, $id){
         $supprimer = User::findOrFail($id);
+        $userType = $supprimer->type; // Sauvegarder le type avant suppression
 
         if($request->has('Supprimer')){
             $supprimer->delete($id);
             $request->session()->flash('etat', 'la suppression a été effectuée avec succès');
         } else {
             $request->session()->flash('etat', 'Supprission annulée' );
+        }
+        // Redirection selon le type d'utilisateur
+        if ($userType === 'enseignant') {
+            return redirect()->route('admin.enseignants');
         }
         return redirect()->route('admin.users.index');
     }
@@ -188,5 +207,11 @@ class UserController extends Controller
         session()->flash('etat','Utilisateur enseignant ajouté avec succès !');
 
         return redirect()->route('admin.users.index');
+    }
+
+    //Afficher le profil de l'utilisateur connecté
+    public function showProfil(){
+        $user = Auth::user();
+        return view('admin.account.profil', ['user' => $user]);
     }
 }

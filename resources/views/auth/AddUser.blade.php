@@ -3,9 +3,6 @@
 @section('title', 'Page confirmation - Suppression')
 
 @section('contents')
-    <!--------------------- NavBar ------------------------------->
-    @include('admin.partials.navbar-admin')
-
     <div class="container-sm mt-3">
         <h3>Formulaire D'ajout d'un utilisateur</h3>
         <form method="POST">

@@ -57,7 +57,7 @@
             <hr class="sidebar-divider my-0" style="border-top: 1px solid rgba(255,255,255,0.15);">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('home') }}">
                     <i class="bi bi-speedometer2"></i>
                     <span>Tableau de bord</span>
@@ -67,34 +67,243 @@
             <!-- Divider -->
             <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
+            @auth
+                @if(Auth::user()->type === 'admin')
+                    <!-- Heading - Admin Section -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-shield-check me-2"></i>Administration
+                    </div>
 
-            <!-- Nav Item - Students -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-people-fill"></i>
-                    <span>Étudiants</span>
-                </a>
-            </li>
+                    <!-- Nav Item - Students -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.etudiants') }}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Étudiants</span>
+                        </a>
+                    </li>
 
-            <!-- Nav Item - Teachers -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-person-badge-fill"></i>
-                    <span>Enseignants</span>
-                </a>
-            </li>
+                    <!-- Nav Item - Teachers -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.enseignants') }}">
+                            <i class="bi bi-person-badge-fill"></i>
+                            <span>Enseignants</span>
+                        </a>
+                    </li>
 
-            <!-- Nav Item - Modules -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-book-fill"></i>
-                    <span>Modules</span>
-                </a>
-            </li>
+                    <!-- Nav Item - Modules -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.modules') }}">
+                            <i class="bi bi-book-fill"></i>
+                            <span>Modules</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Users Management -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.users.index') }}">
+                            <i class="bi bi-person-check"></i>
+                            <span>Gestion Utilisateurs</span>
+                        </a>
+                    </li>
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+                    <!-- Heading - Account -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-person-circle me-2"></i>Compte
+                    </div>
+
+                    <!-- Nav Item - Change Password -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.account.edit') }}">
+                            <i class="bi bi-key"></i>
+                            <span>Changer Mot de passe</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.profil') }}">
+                            <i class="bi bi-person"></i>
+                            <span>Profil</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </li>
+                @elseif(Auth::user()->type === 'enseignant')
+                    <!-- Heading - Enseignant Section -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-book me-2"></i>Enseignant
+                    </div>
+
+                    <!-- Nav Item - Modules -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.modules.index') }}">
+                            <i class="bi bi-book-fill"></i>
+                            <span>Mes Modules</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Seances -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.showSeance') }}">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Mes Séances</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Students -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.etudiants') }}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Étudiants</span>
+                        </a>
+                    </li>
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+                    <!-- Heading - Account -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-person-circle me-2"></i>Compte
+                    </div>
+
+                    <!-- Nav Item - Change Password -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.account.edit') }}">
+                            <i class="bi bi-key"></i>
+                            <span>Changer Mot de passe</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.profil') }}">
+                            <i class="bi bi-person"></i>
+                            <span>Profil</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </li>
+                @elseif(Auth::user()->type === 'etudiant')
+                    <!-- Heading - Etudiant Section -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-mortarboard me-2"></i>Étudiant
+                    </div>
+
+                    <!-- Nav Item - Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.home') }}">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+                    <!-- Heading - Account -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-person-circle me-2"></i>Compte
+                    </div>
+
+                    <!-- Nav Item - Change Password -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.account.edit') }}">
+                            <i class="bi bi-key"></i>
+                            <span>Changer Mot de passe</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.profil') }}">
+                            <i class="bi bi-person"></i>
+                            <span>Profil</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </li>
+                @elseif(Auth::user()->type === 'gestionnaire')
+                    <!-- Heading - Gestionnaire Section -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-gear me-2"></i>Gestion
+                    </div>
+
+                    <!-- Nav Item - Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('gestionnaire.home') }}">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
+                    <!-- Heading - Account -->
+                    <div class="sidebar-heading">
+                        <i class="bi bi-person-circle me-2"></i>Compte
+                    </div>
+
+                    <!-- Nav Item - Change Password -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('gestionnaire.account.edit') }}">
+                            <i class="bi bi-key"></i>
+                            <span>Changer Mot de passe</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('gestionnaire.profil') }}">
+                            <i class="bi bi-person"></i>
+                            <span>Profil</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </li>
+                @else
+                    <!-- Heading - Interface Section (Non-Admin, Non-Enseignant) -->
+                    <div class="sidebar-heading">
+                        Interface
+                    </div>
+
+                    <!-- Nav Item - Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
+
 
         </ul>
         <!-- End of Sidebar -->
@@ -106,7 +315,8 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="topbar mb-4 static-top">
+                <nav class="topbar mb-4 static-top"
+                    style="@auth @if(Auth::user()->type === 'admin') display: none; @endif @endauth">
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="bi bi-list"></i>

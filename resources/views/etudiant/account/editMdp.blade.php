@@ -37,7 +37,7 @@
             background: white;
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .form-title {
@@ -79,7 +79,7 @@
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             color: white;
         }
     </style>
@@ -91,14 +91,16 @@
         </h1>
 
         @if(session()->has('etat'))
-            <div class="alert alert-{{ session()->get('etat') == 'Mot de passe changé' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
-                <i class="bi bi-{{ session()->get('etat') == 'Mot de passe changé' ? 'check-circle' : 'exclamation-triangle' }} me-2"></i>
+            <div class="alert alert-{{ session()->get('etat') == 'Mot de passe changé' ? 'success' : 'danger' }} alert-dismissible fade show"
+                role="alert">
+                <i
+                    class="bi bi-{{ session()->get('etat') == 'Mot de passe changé' ? 'check-circle' : 'exclamation-triangle' }} me-2"></i>
                 {{ session()->get('etat') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        <form action="{{ route('admin.account.edit') }}" method="POST">
+        <form action="{{ route('etudiant.account.edit') }}" method="POST">
             <div class="mb-3">
                 <label for="mdp_old" class="form-label">Ancien Mot de Passe</label>
                 <input type="password" class="form-control" name="mdp_old" id="mdp_old" value="password" readonly>
@@ -111,7 +113,8 @@
             <div class="mb-3">
                 <label for="mdp" class="form-label">Nouveau Mot de Passe</label>
                 <div class="password-field">
-                    <input type="password" class="form-control password-input" name="mdp" id="mdp" placeholder="Entrez votre nouveau mot de passe" required>
+                    <input type="password" class="form-control password-input" name="mdp" id="mdp"
+                        placeholder="Entrez votre nouveau mot de passe" required>
                     <button type="button" class="password-toggle" onclick="togglePassword('mdp')">
                         <i class="bi bi-eye-slash"></i>
                     </button>
@@ -124,7 +127,8 @@
             <div class="mb-3">
                 <label for="mdp_confirmation" class="form-label">Confirmer Mot de Passe</label>
                 <div class="password-field">
-                    <input type="password" class="form-control password-input" name="mdp_confirmation" id="mdp_confirmation" placeholder="Confirmez votre nouveau mot de passe" required>
+                    <input type="password" class="form-control password-input" name="mdp_confirmation" id="mdp_confirmation"
+                        placeholder="Confirmez votre nouveau mot de passe" required>
                     <button type="button" class="password-toggle" onclick="togglePassword('mdp_confirmation')">
                         <i class="bi bi-eye-slash"></i>
                     </button>

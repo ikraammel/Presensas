@@ -3,9 +3,6 @@
 @section('title', 'Liste de toutes les séances')
 
 @section('contents')
-    <!--------------------- NavBar ------------------------------->
-    @include('enseignant.partials.navbar-enseignant')
-
     @unless(empty($seances))
         <div class="container-sm mt-3">
             <!----------------------------Back-------------------------------->
@@ -16,8 +13,8 @@
                 <a href="{{route('enseignant.pointer.etudiantPlusieurs')}}" style="text-decoration: none; color: black;"><i class="bi bi-chevron-contract"></i>&nbsp;Associé Plusiers Etudiants</a>
             </button>
 
-            <button title="Liste des séances de cours"  type="button" class="btn btn-info"  aria-expanded="false">
-                <a href="{{route('gestionnaire.seance.ListEnseignant', ['id'=>Auth::user()->id])}}" style="text-decoration: none; color: black;"><i class="bi bi-eye-fill"></i>&nbsp;Voir la liste des cours associés</a>
+            <button title="Liste des cours associés"  type="button" class="btn btn-info"  aria-expanded="false">
+                <a href="{{route('enseignant.cours.show', ['id'=>Auth::user()->id])}}" style="text-decoration: none; color: black;"><i class="bi bi-eye-fill"></i>&nbsp;Voir la liste des cours associés</a>
             </button>
             <!----------------------------Table------------------------------>
             <table class="table table-hover caption-top shadow">

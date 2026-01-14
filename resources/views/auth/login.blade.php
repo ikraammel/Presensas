@@ -122,6 +122,32 @@
 
             <p class="login-subtitle">Connectez-vous pour accéder à votre espace personnel</p>
 
+            @if (session('etat'))
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>{{ session('etat') }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>
+                        @if ($errors->has('login') && strpos($errors->first('login'), 'validé') !== false)
+                            <strong>Compte en attente d'approbation</strong>
+                            <p class="mb-0">{{ $errors->first('login') }}</p>
+                            <small>Veuillez contacter un administrateur pour valider votre compte.</small>
+                        @else
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        @endif
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <form method="post" action="{{ route('login') }}">
                 @csrf
 

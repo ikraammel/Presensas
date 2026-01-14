@@ -1,9 +1,6 @@
 @extends('modele')
 @section('title', 'Gestion des Cours')
 @section('contents')
-    <!--------------------- NavBar --------------------------->
-    @include('admin.partials.navbar-admin')
-    <!--------------------------- END NAVBAR ----------------------------------->
     @unless(empty($cours))
         <div class="container-sm mt-4">
             <!-----------------------------Btn Back------------------------------>

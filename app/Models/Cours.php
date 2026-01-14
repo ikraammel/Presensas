@@ -11,8 +11,6 @@ class Cours extends Model
 
     protected $table = 'cours';
 
-    public $timestamps = false;
-
     protected $fillable = ['id','intitule', 'created_at', 'updated_at'];
 
     public function user(){

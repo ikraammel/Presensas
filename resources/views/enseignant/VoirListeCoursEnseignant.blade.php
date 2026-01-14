@@ -3,10 +3,6 @@
 @section('title', 'Gestion des Cours')
 
 @section('contents')
-    <!--------------------- NavBar ------------------------------->
-    @include('enseignant.partials.navbar-enseignant')
-
-    <!--------------------------- END NAVBAR ----------------------------------->
     @unless(empty($cours))
         <div class="container-sm mt-3">
             <!-----------------------------Btn Back------------------------------>

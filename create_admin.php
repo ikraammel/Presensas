@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Hash;
 echo "=== CRÉATION D'UN ADMINISTRATEUR ===\n\n";
 
 // Créer un admin par défaut
-$login = 'admin';
-$nom = 'Admin';
-$prenom = 'System';
-$password = 'admin123'; // Changez ce mot de passe après la première connexion
+$login = 'ikramelhoul';
+$nom = 'El houl';
+$prenom = 'Ikram';
+$password = 'password'; // Changez ce mot de passe après la première connexion
 
 // Vérifier si l'admin existe déjà
 if (User::where('login', $login)->exists()) {

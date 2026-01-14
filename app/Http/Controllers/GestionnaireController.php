@@ -2,36 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cours;
-use App\Models\Seances;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class EtudiantController extends Controller
+class GestionnaireController extends Controller
 {
-    // Dashboard étudiant
     public function index()
     {
-        $user = Auth::user();
-
-        // Pour l'étudiant, on récupère ses cours via la table cours_etudiants
-        // Pour l'instant, on retourne un dashboard simple
-        return view('etudiant.home', [
-            'user' => $user,
-        ]);
+        return view('gestionnaire.home');
     }
 
     public function showProfil()
     {
         $user = Auth::user();
-        return view('etudiant.account.profil', ['user' => $user]);
+        return view('gestionnaire.account.profil', ['user' => $user]);
     }
 
     public function editFormMdp()
     {
-        return view('etudiant.account.editMdp');
+        return view('gestionnaire.account.editMdp');
     }
 
     public function editMdp(Request $request)
@@ -44,10 +35,10 @@ class EtudiantController extends Controller
         if (Hash::check($request->mdp_old, $user->mdp)) {
             $user->fill(['mdp' => Hash::make($request->mdp)])->save();
             $request->session()->flash('etat', 'Mot de passe changé');
-            return redirect()->route('etudiant.home');
+            return redirect()->route('gestionnaire.home');
         }
         $request->session()->flash('etat', 'votre mot de passe n\'est pas correct, Veuillez réessayer');
 
-        return redirect()->route('etudiant.home');
+        return redirect()->route('gestionnaire.home');
     }
 }

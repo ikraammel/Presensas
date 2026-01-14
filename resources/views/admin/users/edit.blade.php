@@ -3,7 +3,6 @@
 @section('title', 'Modication et validation')
 
 @section('contents')
-    @include('admin.partials.navbar-admin')
 
     <!---------------------- FORM ------------------------------->
     <div class="d-flex flex-column h-90">

@@ -4,7 +4,6 @@
 @section('title', 'Modication et validation')
 
 @section('contents')
-    @include('admin.partials.navbar-admin')
 
     <div class="container-sm mt-4">
         <!-----------------------------Btn Back------------------------------>

@@ -1,6 +1,6 @@
 @extends('modele')
 
-@section('title', 'Dashboard Étudiant')
+@section('title', 'Dashboard Gestionnaire')
 
 @section('contents')
 
@@ -17,7 +17,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
-        .stat-card.card-welcome {
+        .stat-card.card-primary {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
         }
@@ -55,19 +55,17 @@
         </h1>
     </div>
 
-    <!-- Welcome Card -->
     <div class="row mb-4">
         <div class="col-xl-12 col-md-12 mb-4">
-            <div class="card stat-card card-welcome h-100">
+            <div class="card stat-card card-primary h-100">
                 <div class="card-body d-flex align-items-center">
                     <div class="flex-grow-1">
-                        <div class="stat-label">Bonjour</div>
-                        <div class="stat-number">{{ $user->prenom }} {{ $user->nom }}</div>
-                        <p>Bienvenue sur votre espace étudiant. Vous pouvez consulter vos cours et votre profil depuis le
-                            menu.</p>
+                        <div class="stat-label">Bienvenue</div>
+                        <div class="stat-number">Gestionnaire</div>
+                        <p>Bienvenue sur votre espace de gestion.</p>
                     </div>
                     <div class="text-end">
-                        <i class="bi bi-mortarboard-fill stat-icon"></i>
+                        <i class="bi bi-gear-fill stat-icon"></i>
                     </div>
                 </div>
             </div>

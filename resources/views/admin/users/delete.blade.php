@@ -3,7 +3,6 @@
 @section('title', 'Page confirmation - Suppression utilisateur')
 
 @section('contents')
-    @include('admin.partials.navbar-admin')
 
     <div class="container-sm mt-5">
         <h3>Voulez-vous supprimer {{$users->nom}} {{$users->prenom}} ?</h3>

@@ -4,8 +4,6 @@
 @section('title', 'Association de l\'étudiant à un cours')
 
 @section('contents')
-    <!--------------------- NavBar ------------------------------->
-    @include('enseignant.partials.navbar-enseignant')
     <!----------------------------------Formulaire--------------------------->
     <div class="container-sm mt-3">
         <!----------------------------Back-------------------------------->
