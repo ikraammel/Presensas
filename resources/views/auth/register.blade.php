@@ -82,7 +82,6 @@
                         <option value="">-- Choisissez votre profil --</option>
                         <option value="etudiant" {{ old('type') == 'etudiant' ? 'selected' : '' }}>Étudiant</option>
                         <option value="enseignant" {{ old('type') == 'enseignant' ? 'selected' : '' }}>Enseignant</option>
-                        <option value="gestionnaire" {{ old('type') == 'gestionnaire' ? 'selected' : '' }}>Gestionnaire</option>
                     </select>
                     @error('type')
                         <div class="text-danger small mt-1">{{ $message }}</div>

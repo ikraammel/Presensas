@@ -45,12 +45,10 @@ class AuthenticatedSessionController extends Controller
             // Rediriger selon le type
             if ($user->type == 'admin') {
                 return redirect()->intended('/admin');
-            } else if ($user->type == 'gestionnaire') {
-                return redirect()->intended('/gestionnaire');
             } elseif ($user->type == 'enseignant') {
                 return redirect()->intended('/enseignant');
             } elseif ($user->type == 'etudiant') {
-                return redirect()->intended('/');
+                return redirect()->intended('/etudiant');
             }
             
             return redirect()->route('home');

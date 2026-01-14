@@ -21,12 +21,6 @@ class UserController extends Controller
         return view('admin.users.index', ['users'=>$user]);
     }
 
-    //filtre gestionnaire
-    public function showGestionnaire(){
-        $user = User::where('type', '=', 'gestionnaire')->get();;
-        return view('admin.users.index', ['users'=>$user]);
-    }
-
     //filtre enseignant
     public function showEnseignant(){
         $user = User::where('type', '=', 'enseignant')->get();
@@ -170,28 +164,6 @@ class UserController extends Controller
         $user->save();
 
         session()->flash('etat','Utilisateur admin ajouté avec succès !');
-
-        return redirect()->route('admin.users.index');
-    }
-
-    //create user gestionnaire
-    public function addUserGestionnaire(Request $request){
-        $request->validate([
-            'login' => 'required|string|max:255|unique:users',
-            'nom'=>'required|string|max:255',
-            'prenom'=>'required|string',
-            'mdp' => 'required|string|confirmed'//|min:8',
-        ]);
-
-        $user = new User();
-        $user->login = $request->login;
-        $user->nom = $request->nom;
-        $user->prenom = $request->prenom;
-        $user->mdp = Hash::make($request->mdp);
-        $user->type= 'gestionnaire';
-        $user->save();
-
-        session()->flash('etat','AUtilisateur gestionnaire ajouté avec succès !');
 
         return redirect()->route('admin.users.index');
     }

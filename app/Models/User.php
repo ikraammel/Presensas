@@ -38,11 +38,6 @@ class User extends Authenticatable
         return $this->type == 'admin';
     }
 
-    public function isGestionnaire()
-    {
-        return $this->type == 'gestionnaire' || $this->type == 'admin';
-    }
-
     public function isEnseignant()
     {
         return $this->type == 'enseignant' || $this->type == 'admin';

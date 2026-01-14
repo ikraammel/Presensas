@@ -16,14 +16,12 @@ class AdminController extends Controller
         $totalUsers = User::count();
         $totalAdmins = User::where('type', 'admin')->count();
         $totalEnseignants = User::where('type', 'enseignant')->count();
-        $totalGestionnaires = User::where('type', 'gestionnaire')->count();
         
         return view('admin.home', [
             'usersNonValides' => $usersNonValides,
             'totalUsers' => $totalUsers,
             'totalAdmins' => $totalAdmins,
             'totalEnseignants' => $totalEnseignants,
-            'totalGestionnaires' => $totalGestionnaires,
         ]);
     }
 }

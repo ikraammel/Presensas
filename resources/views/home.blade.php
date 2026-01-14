@@ -8,9 +8,6 @@
             @case('admin')
                 <meta http-equiv="refresh" content="0; URL=http://localhost/admin" />
             @break
-            @case('gestionnaire')
-                <meta http-equiv="refresh" content="0; URL=http://localhost/gestionnaire" />
-            @break
             @case('enseignant')
                 <meta http-equiv="refresh" content="0; URL=http://localhost/enseignant" />
             @break

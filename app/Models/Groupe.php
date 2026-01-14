@@ -11,7 +11,8 @@ class Groupe extends Model
 
     protected $fillable = [
         'nom',
-        'description'
+        'description',
+        'user_id'
     ];
 
     public function etudiants()
@@ -22,5 +23,10 @@ class Groupe extends Model
     public function cours()
     {
         return $this->belongsToMany(Cours::class, 'cours_groupes', 'groupe_id', 'cours_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

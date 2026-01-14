@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\CoursController;
 use App\Http\Controllers\EnseignantController;
-use App\Http\Controllers\GestionnaireController;
+use App\Http\Controllers\EtudiantController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
@@ -39,7 +39,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
     Route::get('/admin/users/index', [UserController::class, 'show'])->name('admin.users.index');
     Route::get('/admin/users/indexAll', [UserController::class, 'showAll'])->name('admin.users.indexAll');
-    Route::get('/admin/users/indexGestionnaire', [UserController::class, 'showGestionnaire'])->name('admin.users.indexGestionnaire');
     Route::get('/admin/users/indexEnseignant', [UserController::class, 'showEnseignant'])->name('admin.users.indexEnseignant');
     Route::get('/admin/users/indexEtudiant', [UserController::class, 'showEtudiant'])->name('admin.users.indexEtudiant');
     Route::get('/admin/users/search', [UserController::class, 'recherche'])->name('admin.users.search');
@@ -59,8 +58,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/admin/user/addAdmin', [UserController::class, 'addUserAdmin'])->name('admin.user.createAdmin');
     Route::get('/admin/user/addEnseignant', [UserController::class, 'addUserForm'])->name('admin.user.createEnseignant');
     Route::post('/admin/user/addEnseignant', [UserController::class, 'addUserEnseignant'])->name('admin.user.createEnseignant');
-    Route::get('/admin/user/addGestionnaire', [UserController::class, 'addUserForm'])->name('admin.user.createGestionnaire');
-    Route::post('/admin/user/addGestionnaire', [UserController::class, 'addUserGestionnaire'])->name('admin.user.createGestionnaire');
     Route::get('/admin/editMdp',[UserController::class, 'editForm_Mdp'])->name('admin.account.edit');
     Route::post('/admin/editMdp',[UserController::class, 'editMdp'])->name('admin.account.edit');
     Route::get('/admin/editNonEtPrenom/{id}',[UserController::class, 'editFormNomPrenom'])->name('admin.account.editNomPrenom');
@@ -71,8 +68,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
 /*====================== Enseignant =======================*/
 Route::middleware(['auth', 'is_enseignant'])->group(function () {
-    Route::view('/enseignant', 'enseignant.home')
-        ->name('enseignant.home');
+    Route::get('/enseignant', [EnseignantController::class, 'index'])->name('enseignant.home');
     Route::get('/enseignant/editMdp',[EnseignantController::class, 'editFormMdp'])->name('enseignant.account.edit');
     Route::post('/enseignant/editMdp',[EnseignantController::class, 'edit'])->name('enseignant.account.edit');
     Route::get('/enseignant/editNonPrenom/{id}',[EnseignantController::class, 'editForm_NomPrenom'])->name('enseignant.account.editNomPrenom');
@@ -82,51 +78,77 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::post('/enseignant/seance/pointerUnEtudiant/{id}', [EnseignantController::class, 'pointageEtudiant'])->name('enseignant.pointer.etudiant');
     Route::get('/enseignant/seance/pointerUnEtudiantPlusieurs', [EnseignantController::class, 'pointageEtudiantPlusieursForm'])->name('enseignant.pointer.etudiantPlusieurs');
     Route::post('/enseignant/seance/pointerUnEtudiantPlusieurs', [EnseignantController::class, 'pointageEtudiantPlusieurs'])->name('enseignant.pointer.etudiantPlusieurs');
-    Route::get('/enseignant/seance/showListeEnseignant/{id}', [EnseignantController::class,'showEnseignantList'])->name('gestionnaire.seance.ListEnseignant'); //1.1 voir les cours associés à l'enseignant (partie ens.)
+    Route::get('/enseignant/seance/showListeEnseignant/{id}', [EnseignantController::class,'showEnseignantList'])->name('enseignant.cours.show');
+    
+    // Gestion des classes
+    Route::get('/enseignant/classes', [EnseignantController::class, 'indexClasses'])->name('enseignant.classes.index');
+    Route::get('/enseignant/classes/create', [EnseignantController::class, 'createClasseForm'])->name('enseignant.classes.create');
+    Route::post('/enseignant/classes', [EnseignantController::class, 'storeClasse'])->name('enseignant.classes.store');
+    Route::get('/enseignant/classes/{id}/edit', [EnseignantController::class, 'editClasseForm'])->name('enseignant.classes.edit');
+    Route::post('/enseignant/classes/{id}', [EnseignantController::class, 'updateClasse'])->name('enseignant.classes.update');
+    Route::get('/enseignant/classes/{id}/delete', [EnseignantController::class, 'deleteClasse'])->name('enseignant.classes.delete');
+    Route::get('/enseignant/classes/{id}/etudiants', [EnseignantController::class, 'showClasseEtudiants'])->name('enseignant.classes.etudiants');
+    Route::get('/enseignant/classes/{id}/etudiants/add', [EnseignantController::class, 'addEtudiantToClasseForm'])->name('enseignant.classes.etudiants.add');
+    Route::post('/enseignant/classes/{id}/etudiants', [EnseignantController::class, 'storeEtudiantToClasse'])->name('enseignant.classes.etudiants.store');
+    Route::get('/enseignant/classes/{id}/import-csv', [EnseignantController::class, 'importEtudiantsCSVForm'])->name('enseignant.classes.import-csv');
+    Route::post('/enseignant/classes/{id}/import-csv', [EnseignantController::class, 'importEtudiantsCSV'])->name('enseignant.classes.import-csv');
+    
+    // Gestion des modules
+    Route::get('/enseignant/modules', [EnseignantController::class, 'indexModules'])->name('enseignant.modules.index');
+    Route::get('/enseignant/modules/create', [EnseignantController::class, 'createModuleForm'])->name('enseignant.modules.create');
+    Route::post('/enseignant/modules', [EnseignantController::class, 'storeModule'])->name('enseignant.modules.store');
+    Route::get('/enseignant/modules/{id}/edit', [EnseignantController::class, 'editModuleForm'])->name('enseignant.modules.edit');
+    Route::post('/enseignant/modules/{id}', [EnseignantController::class, 'updateModule'])->name('enseignant.modules.update');
+    Route::get('/enseignant/modules/{id}/delete', [EnseignantController::class, 'deleteModule'])->name('enseignant.modules.delete');
+    Route::get('/enseignant/modules/{id}/link-classe', [EnseignantController::class, 'linkModuleToClasseForm'])->name('enseignant.modules.link-classe');
+    Route::post('/enseignant/modules/{id}/link-classe', [EnseignantController::class, 'storeModuleClasseLink'])->name('enseignant.modules.link-classe');
+    
+    // Gestion des séances
+    Route::get('/enseignant/seances', [EnseignantController::class, 'indexSeances'])->name('enseignant.seances.index');
+    Route::get('/enseignant/seances/create', [EnseignantController::class, 'createSeanceForm'])->name('enseignant.seances.create');
+    Route::post('/enseignant/seances', [EnseignantController::class, 'storeSeance'])->name('enseignant.seances.store');
+    Route::get('/enseignant/seances/{id}/edit', [EnseignantController::class, 'editSeanceForm'])->name('enseignant.seances.edit');
+    Route::post('/enseignant/seances/{id}', [EnseignantController::class, 'updateSeance'])->name('enseignant.seances.update');
+    Route::get('/enseignant/seances/{id}/delete', [EnseignantController::class, 'deleteSeance'])->name('enseignant.seances.delete');
+    Route::get('/enseignant/seances/calendrier', [EnseignantController::class, 'calendarSeances'])->name('enseignant.seances.calendrier');
+    Route::get('/enseignant/seances/{id}/qr-code', [EnseignantController::class, 'generateQRCode'])->name('enseignant.seances.qr-code');
+    
+    // Enregistrement présence
+    Route::get('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'presenceManuelleForm'])->name('enseignant.presences.manuel');
+    Route::post('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'storePresenceManuelle'])->name('enseignant.presences.manuel');
+    Route::get('/enseignant/presences/{seanceId}/qr-code', [EnseignantController::class, 'presenceQRCodeForm'])->name('enseignant.presences.qr-code');
+    Route::post('/enseignant/presences/{seanceId}/qr-code/scan', [EnseignantController::class, 'scanQRCode'])->name('enseignant.presences.qr-code.scan');
+    Route::get('/enseignant/presences/{seanceId}/nfc', [EnseignantController::class, 'presenceNFCForm'])->name('enseignant.presences.nfc');
+    Route::post('/enseignant/presences/{seanceId}/nfc/scan', [EnseignantController::class, 'scanNFC'])->name('enseignant.presences.nfc.scan');
+    
+    // Documents
+    Route::get('/enseignant/documents', [EnseignantController::class, 'indexDocuments'])->name('enseignant.documents.index');
+    Route::get('/enseignant/documents/create', [EnseignantController::class, 'createDocumentForm'])->name('enseignant.documents.create');
+    Route::post('/enseignant/documents', [EnseignantController::class, 'storeDocument'])->name('enseignant.documents.store');
+    Route::get('/enseignant/documents/{id}/delete', [EnseignantController::class, 'deleteDocument'])->name('enseignant.documents.delete');
+    Route::get('/enseignant/documents/{id}/download', [EnseignantController::class, 'downloadDocument'])->name('enseignant.documents.download');
+    
+    // Annonces
+    Route::get('/enseignant/annonces', [EnseignantController::class, 'indexAnnonces'])->name('enseignant.annonces.index');
+    Route::get('/enseignant/annonces/create', [EnseignantController::class, 'createAnnonceForm'])->name('enseignant.annonces.create');
+    Route::post('/enseignant/annonces', [EnseignantController::class, 'storeAnnonce'])->name('enseignant.annonces.store');
+    Route::get('/enseignant/annonces/{id}/edit', [EnseignantController::class, 'editAnnonceForm'])->name('enseignant.annonces.edit');
+    Route::post('/enseignant/annonces/{id}', [EnseignantController::class, 'updateAnnonce'])->name('enseignant.annonces.update');
+    Route::get('/enseignant/annonces/{id}/delete', [EnseignantController::class, 'deleteAnnonce'])->name('enseignant.annonces.delete');
+    
+    // Statistiques
+    Route::get('/enseignant/statistiques', [EnseignantController::class, 'indexStatistiques'])->name('enseignant.statistiques.index');
+    Route::get('/enseignant/statistiques/classe/{classeId}', [EnseignantController::class, 'statistiquesParClasse'])->name('enseignant.statistiques.classe');
+    Route::get('/enseignant/statistiques/etudiant/{etudiantId}', [EnseignantController::class, 'statistiquesParEtudiant'])->name('enseignant.statistiques.etudiant');
+    Route::get('/enseignant/statistiques/export/excel', [EnseignantController::class, 'exportStatistiquesExcel'])->name('enseignant.statistiques.export.excel');
+    Route::get('/enseignant/statistiques/export/pdf', [EnseignantController::class, 'exportStatistiquesPDF'])->name('enseignant.statistiques.export.pdf');
 });
 
-/*===================== Gestionnaire =======================*/
-Route::middleware(['auth', 'is_gestionnaire'])->group(function () {
-    Route::view('/gestionnaire', 'gestionnaire.home')
-        ->name('gestionnaire.home');
-    Route::get('/gestionnaire/editMdp',[GestionnaireController::class, 'editFormMdp'])->name('gestionnaire.account.edit');
-    Route::post('/gestionnaire/editMdp',[GestionnaireController::class, 'edit'])->name('gestionnaire.account.edit');
-    Route::get('/gestionnaire/editNonEtPrenom/{id}',[GestionnaireController::class, 'editForm_NomPrenom'])->name('gestionnaire.account.editNomPrenom');
-    Route::post('/gestionnaire/editNonEtPrenom/{id}',[GestionnaireController::class, 'editName'])->name('gestionnaire.account.editNomPrenom');
-    Route::get('/gestionnaire/etudiant/index',[GestionnaireController::class, 'show'])->name('gestionnaire.etudiant.index');
-    Route::get('/gestionnaire/etudiant/add',[GestionnaireController::class, 'addForm'])->name('gestionnaire.etudiant.add');
-    Route::post('/gestionnaire/etudiant/add',[GestionnaireController::class, 'add'])->name('gestionnaire.edutiant.add');
-    Route::get('/gestionnaire/etudiant/edit/{id}',[GestionnaireController::class, 'editForm'])->name('gestionnaire.etudiant.edit');
-    Route::post('/gestionnaire/etudiant/edit/{id}',[GestionnaireController::class, 'editEtudiant'])->name('gestionnaire.edutiant.edit');
-    Route::get('/gestionnaire/etudiant/delete/{id}',[GestionnaireController::class, 'deleteEtudiant'])->name('gestionnaire.etudiant.delete');
-    //Route::post('/gestionnaire/etudiant/delete/{id}',[GestionnaireController::class, 'deleteEtudiant'])->name('gestionnaire.edutiant.delete');
-    Route::get('/gestionnaire/etudiant/searchEtudiant', [SeanceController::class, 'searchEtudiant'])->name('gestionnaire.etudiant.search');
-    Route::get('/gestionnaire/seances/index',[SeanceController::class, 'showSeance'])->name('gestionnaire.seance.index'); //Index de l'accueil
-    Route::get('/gestionnaire/seance/create/{id}',[SeanceController::class, 'createForm'])->name('gestionnaire.seance.create');
-    Route::post('/gestionnaire/seance/create/{id}',[SeanceController::class, 'createSeance'])->name('gestionnaire.seance.create');
-    Route::get('/gestionnaire/seance/index',[SeanceController::class, 'showSeanceCours'])->name('gestionnaire.seance.afficheList');
-    Route::get('/gestionnaire/seance/edit/{id}',[SeanceController::class, 'editFormSeance'])->name('gestionnaire.seance.edit');
-    Route::post('/gestionnaire/seance/edit/{id}',[SeanceController::class, 'editSeance'])->name('gestionnaire.seance.edit');
-    Route::get('/gestionnaire/seance/delete/{id}',[SeanceController::class, 'deleteSeance'])->name('gestionnaire.seance.delete');
-    Route::get('/gestionnaire/seance/listePourUnCours/{id}',[SeanceController::class, 'showList'])->name('gestionnaire.seance.afficheListSeanceUncours');
-    Route::get('/gestionnaire/seance/associeEtudiant/{id}',[SeanceController::class, 'asssocieEtudantForm'])->name('gestionnaire.etudiant.associe');
-    Route::post('/gestionnaire/seance/associeEtudiant/{id}',[SeanceController::class, 'associeEtudiant'])->name('gestionnaire.etudiant.associe');
-    Route::get('/gestionnaire/seance/showAssociationEtudiant/{id}', [SeanceController::class,'showListAssociation'])->name('gestionnaire.seance.showListAssociationEtudaint');
-    Route::get('/gestionnaire/seance/ListeDesEnseignant', [SeanceController::class, 'ListeEnseignantPourAssociation'])->name('gestionnaire.liste.enseignant');//partie show liste enseignant
-    Route::get('/gestionnaire/seance/DissocierEtudiant', [SeanceController::class, 'dissocierEtudiantForm'])->name('gestionnaire.dissocier');//partie dissocier etuddiant
-    Route::post('/gestionnaire/seance/DissocierEtudiant', [SeanceController::class, 'dissocierEtudiant'])->name('gestionnaire.dissocier');
-    Route::get('/gestionnaire/seance/associerEnseignant/{id}', [SeanceController::class, 'asssocieEnseignantForm'])->name('gestionnaire.associer.enseignant');//partie association enseignant
-    Route::post('/gestionnaire/seance/associerEnseignant/{id}', [SeanceController::class, 'asssocieEnseignant'])->name('gestionnaire.associer.enseignant');
-    Route::get('/gestionnaire/seance/dissocierEnseignant', [SeanceController::class, 'dissocierEnseignantForm'])->name('gestionnaire.dissocier.enseignant');//partie association enseignant
-    Route::post('/gestionnaire/seance/dissocierEnseignant', [SeanceController::class, 'dissocierEnseignant'])->name('gestionnaire.dissocier.enseignant');
-    Route::get('/gestionnaire/seance/showAssociationEnseignant/{id}', [SeanceController::class,'showListAssociationEns'])->name('gestionnaire.seance.showListAssociationEnseignant');
-    Route::get('/gestionnaire/seance/associeEtudiantPlusieurs',[SeanceController::class, 'asssocieEtudantPlusieursForm'])->name('gestionnaire.etudiant.associePlusieurs');
-    Route::post('/gestionnaire/seance/associeEtudiantPlusieurs',[SeanceController::class, 'asssocieEtudantPlusieurs'])->name('gestionnaire.etudiant.associePlusieurs');
-    Route::get('/gestionnaire/seance/dissocieEtudiantPlusieurs',[SeanceController::class, 'dissocieEtudantPlusieursForm'])->name('gestionnaire.etudiant.dissociePlusieurs');
-    Route::post('/gestionnaire/seance/dissocieEtudiantPlusieurs',[SeanceController::class, 'dissocieEtudantPlusieurs'])->name('gestionnaire.etudiant.dissociePlusieurs');
-    Route::get('/gestionnaire/seance/listePresenceDetaille/{id}', [SeanceController::class,'showListePresenceDetaille'])->name('gestionnaire.listePresenceDetaille');
-    Route::get('/gestionnaire/seance/listePresencesParSeance/{id}', [SeanceController::class,'showListePresencesParSeance'])->name('gestionnaire.listePresencesParSeance');
+/*===================== Étudiant =======================*/
+Route::middleware(['auth', 'is_etudiant'])->group(function () {
+    Route::get('/etudiant', [EtudiantController::class, 'index'])->name('etudiant.home');
 });
+
 
 
 /*===================== Login & Logout ===========================*/

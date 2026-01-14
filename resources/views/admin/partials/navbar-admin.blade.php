@@ -21,9 +21,6 @@
                     <a class="nav-link" href="{{route('admin.cours.index')}}">Cours</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('gestionnaire.home')}}">Partie gestionnaire</a>
-                </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('enseignant.home')}}">Partie enseignant</a>

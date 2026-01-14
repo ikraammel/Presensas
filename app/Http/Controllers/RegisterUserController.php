@@ -22,7 +22,7 @@ class RegisterUserController extends Controller
             'nom'=>'required|string|max:255',
             'prenom'=>'required|string',
             'mdp' => 'required|string|confirmed', //|min:8
-            'type' => 'required|string|in:etudiant,enseignant,gestionnaire',
+            'type' => 'required|string|in:etudiant,enseignant',
         ]);
 
         $user = new User();

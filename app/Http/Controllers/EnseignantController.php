@@ -2,16 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Annonce;
+use App\Models\Cours;
+use App\Models\Document;
 use App\Models\Etudiants;
+use App\Models\Groupe;
+use App\Models\Presences;
 use App\Models\Seances;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class EnseignantController extends Controller
 {
+    // Dashboard enseignant
+    public function index(){
+        $user = Auth::user();
+        $cours = $user->cours;
+        $totalCours = $cours->count();
+        
+        // Classes de l'enseignant
+        $groupes = Groupe::where('user_id', $user->id)->get();
+        $totalClasses = $groupes->count();
+        
+        // Séances du jour
+        $coursIds = $cours->pluck('id');
+        $seancesAujourdhui = Seances::whereIn('cours_id', $coursIds)
+            ->whereDate('date_debut', Carbon::today())
+            ->count();
+        
+        $seancesAvenir = Seances::whereIn('cours_id', $coursIds)
+            ->where('date_debut', '>', now())
+            ->with('cours')
+            ->orderBy('date_debut')
+            ->take(5)
+            ->get();
+        $totalSeancesAvenir = Seances::whereIn('cours_id', $coursIds)
+            ->where('date_debut', '>', now())
+            ->count();
+        
+        return view('enseignant.home', [
+            'user' => $user,
+            'totalCours' => $totalCours,
+            'totalClasses' => $totalClasses,
+            'seancesAujourdhui' => $seancesAujourdhui,
+            'totalSeancesAvenir' => $totalSeancesAvenir,
+            'seancesAvenir' => $seancesAvenir,
+        ]);
+    }
     //Modifier le mot de passe enseignant
     public function editFormMdp(){
         return view('enseignant.account.editMdp');
@@ -86,8 +129,13 @@ class EnseignantController extends Controller
 
     //Affiche la séance des cours
     public function showSeance(){
-        $p = Seances::all();
-        return view('enseignant.pointage.ListeSeanceCours', ['seances'=>$p]);
+        $user = Auth::user();
+        $coursIds = $user->cours->pluck('id');
+        $seances = Seances::whereIn('cours_id', $coursIds)
+            ->with('cours')
+            ->orderBy('date_debut', 'desc')
+            ->get();
+        return view('enseignant.pointage.ListeSeanceCours', ['seances'=>$seances]);
     }
 
     //Pointer Plusieurs étudiants

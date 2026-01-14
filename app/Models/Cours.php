@@ -9,8 +9,6 @@ class Cours extends Model
 {
     use HasFactory;
 
-    //private mixed $intitule;
-
     protected $table = 'cours';
 
     public $timestamps = false;
@@ -36,3 +34,8 @@ class Cours extends Model
     public function annonces(){
         return $this->hasMany(Annonce::class);
     }
+
+    public function groupes(){
+        return $this->belongsToMany(Groupe::class, 'cours_groupes', 'cours_id', 'groupe_id');
+    }
+}

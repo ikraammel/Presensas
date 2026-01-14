@@ -21,7 +21,6 @@ class Presences extends Model
     //'etudiant_id'
 
     public function seances(){
-        return $this->belongsTo(Seances::class, 'presences', 'seance_id', 'etudiant_id');
+        return $this->belongsTo(Seances::class, 'seance_id');
     }
-   //'seance_id'
 }

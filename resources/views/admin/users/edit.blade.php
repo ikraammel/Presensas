@@ -30,8 +30,6 @@
                                         Étudiant
                                     @elseif($users->type_demande == 'enseignant')
                                         Enseignant
-                                    @elseif($users->type_demande == 'gestionnaire')
-                                        Gestionnaire
                                     @else
                                         {{ $users->type_demande }}
                                     @endif
