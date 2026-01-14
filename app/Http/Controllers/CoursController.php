@@ -12,23 +12,27 @@ use Illuminate\Support\Facades\DB;
 class CoursController extends Controller
 {
     //affiche la liste des cours
-    public function show(){
+    public function show()
+    {
         $cour = Cours::all();
-        return view('admin.cours.index', ['cours'=>$cour]);
+        return view('admin.cours.index', ['cours' => $cour]);
     }
 
     //ajoute les cours
-    public function addForm(){
+    public function addForm()
+    {
         return view('admin.cours.add');
     }
 
     //Ajoute les cours
-    public function add(Request $request){
-        $validated=$request->validate([
-            'intitule' => 'required|alpha|max:50',
+    public function add(Request $request)
+    {
+        // On autorise les espaces, chiffres, etc. pour éviter les blocages
+        $validated = $request->validate([
+            'intitule' => 'required|string|max:100',
         ]);
         $cour = new Cours();
-        $cour->intitule=$validated['intitule'];
+        $cour->intitule = $validated['intitule'];
         $cour->created_at = Carbon::now();
         $cour->save();
         $request->session()->flash('etat', 'l\'ajout a été effectué avec succès');
@@ -37,7 +41,8 @@ class CoursController extends Controller
     }
 
     //Barre de recherche
-    public function search(){ // function qui fait la recherche d'un cours
+    public function search()
+    { // function qui fait la recherche d'un cours
         $q = request()->input('q');
         $cour = Cours::where('intitule', 'like', "%$q%")->get();
 
@@ -45,19 +50,21 @@ class CoursController extends Controller
     }
 
     //Modifier cours
-    public function editForm($id){
+    public function editForm($id)
+    {
         $cour = Cours::find($id);
         return view('admin.cours.edit', ['cours' => $cour]);
     }
 
     //Modifier cours
-    public function edit(Request $request, $id){
+    public function edit(Request $request, $id)
+    {
         $cour = Cours::findOrFail($id);
-        if($request->has('Modifier')){
-            $validated=$request->validate([
+        if ($request->has('Modifier')) {
+            $validated = $request->validate([
                 'intitule' => 'required|alpha|max:50',
             ]);
-            $cour->intitule=$validated['intitule'];
+            $cour->intitule = $validated['intitule'];
             $cour->updated_at = Carbon::now();
             $cour->save();
             $request->session()->flash('etat', 'modification effectuéé !');
@@ -82,7 +89,8 @@ class CoursController extends Controller
     }*/
 
     //Supprimer Cours
-    public function deleteForm(Request $request, $id){
+    public function deleteForm(Request $request, $id)
+    {
         DB::table('cours_etudiants')->where('cours_id', $id)->delete();
         DB::table('cours_users')->where('cours_id', $id)->delete();
         $p = DB::table('seances')->where('cours_id', $id)->value('seance_id');
@@ -93,6 +101,54 @@ class CoursController extends Controller
         $supprimer->delete($id);
 
         $request->session()->flash('etat', 'la suppression a été effectuée avec succès');
+        return redirect()->route('admin.cours.index');
+    }
+
+    /**
+     * Formulaire d'affectation d'un enseignant à un module (cours).
+     */
+    public function assignEnseignantForm($id)
+    {
+        $cours = Cours::findOrFail($id);
+        $enseignants = User::where('type', 'enseignant')->get();
+
+        // On récupère éventuellement l'enseignant déjà associé (premier de la liste)
+        $enseignantActuelId = $cours->user()->pluck('users.id')->first();
+
+        return view('admin.cours.assignEnseignant', [
+            'cours' => $cours,
+            'enseignants' => $enseignants,
+            'enseignantActuelId' => $enseignantActuelId,
+        ]);
+    }
+
+    /**
+     * Enregistrer l'affectation d'un enseignant à un module.
+     */
+    public function assignEnseignant(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $cours = Cours::findOrFail($id);
+
+        // Vérifier que l'utilisateur choisi est bien un enseignant
+        $enseignant = User::where('id', $validated['user_id'])
+            ->where('type', 'enseignant')
+            ->first();
+
+        if (!$enseignant) {
+            return back()->withErrors([
+                'user_id' => 'L\'utilisateur sélectionné n\'est pas un enseignant.',
+            ])->withInput();
+        }
+
+        // On associe ce module à cet enseignant (un enseignant principal par module)
+        $cours->user()->sync([$enseignant->id]);
+
+        $request->session()->flash('etat', 'Enseignant affecté au module avec succès.');
+
         return redirect()->route('admin.cours.index');
     }
 }

@@ -21,25 +21,48 @@
                 <thead class="table-dark">
                 <tr>
                     <th>#</th>
-                    <th>intitule</th>
-                    <th>created_at</th>
-                    <th>update_at</th>
-                    <th class="text-center">Action</th>
+                    <th>Intitulé</th>
+                    <th>Enseignant</th>
+                    <th>Créé le</th>
+                    <th>Mis à jour le</th>
+                    <th class="text-center">Actions</th>
                 </tr>
                 </thead>
                 @forelse($cours as $cour)
                     <tr>
-                        <td>{{$cour ->id}}</td>
-                        <td>{{$cour ->intitule}}</td>
-                        <td>{{$cour ->created_at}}</td>
-                        <td>{{$cour ->updated_at}}</td>
+                        <td>{{ $cour->id }}</td>
+                        <td>{{ $cour->intitule }}</td>
+                        <td>
+                            @php
+                                $enseignant = $cour->user()->first();
+                            @endphp
+                            @if($enseignant)
+                                {{ $enseignant->nom }} {{ $enseignant->prenom }} ({{ $enseignant->login }})
+                            @else
+                                <span class="text-muted">Aucun enseignant affecté</span>
+                            @endif
+                        </td>
+                        <td>{{ $cour->created_at }}</td>
+                        <td>{{ $cour->updated_at }}</td>
                         <td class="text-center">
-                            <a type="button" class="btn btn-primary" href="{{route('admin.cours.edit', ['id'=>$cour->id])}}"><i class="bi bi-pencil-square"></i> Modifier</a>
-                            <a type="button" class="btn btn-danger" href="{{route('admin.cours.delete', ['id'=>$cour->id])}}"><i class="bi bi-trash3"></i> Supprimer</a>
+                            <a type="button" class="btn btn-sm btn-outline-secondary mb-1"
+                               href="{{ route('admin.cours.assign-enseignant', ['id' => $cour->id]) }}">
+                                <i class="bi bi-person-check"></i> Affecter enseignant
+                            </a>
+                            <a type="button" class="btn btn-primary btn-sm mb-1"
+                               href="{{ route('admin.cours.edit', ['id' => $cour->id]) }}">
+                                <i class="bi bi-pencil-square"></i> Modifier
+                            </a>
+                            <a type="button" class="btn btn-danger btn-sm mb-1"
+                               href="{{ route('admin.cours.delete', ['id' => $cour->id]) }}">
+                                <i class="bi bi-trash3"></i> Supprimer
+                            </a>
                         </td>
                     </tr>
                 @empty
-                    <p> Aucun cours trouvé ! </p>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Aucun cours trouvé.</td>
+                    </tr>
                 @endforelse
             </table>
         </div>

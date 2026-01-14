@@ -79,12 +79,8 @@ class AdminController extends Controller
 
     public function modules()
     {
-        $totalCours = Cours::count();
-        $cours = Cours::paginate(15);
-        
-        return view('admin.modules', [
-            'totalCours' => $totalCours,
-            'cours' => $cours,
-        ]);
+        // Pour simplifier, on réutilise directement la page existante de gestion des cours
+        // qui affiche la liste des modules et permet maintenant d'affecter un enseignant.
+        return redirect()->route('admin.cours.index');
     }
 }
