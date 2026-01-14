@@ -217,7 +217,11 @@ class EnseignantController extends Controller
         $user = Auth::user();
         // Vérifier que le cours appartient bien à l'enseignant ou est assigné
         // Ici on suppose que $user->cours contient les cours assignés
-        $cours = $user->cours()->where('cours.id', $id)->with('documents')->firstOrFail();
+        $cours = $user->cours()->where('cours.id', $id)
+            ->with(['documents' => function($query) {
+                $query->orderBy('created_at', 'desc');
+            }])
+            ->firstOrFail();
 
         return view('enseignant.modules.show', compact('cours'));
     }

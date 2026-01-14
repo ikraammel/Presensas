@@ -70,23 +70,62 @@
                     <h6 class="m-0 font-weight-bold text-success">Ajouter un document</h6>
                 </div>
                 <div class="card-body">
+                    <!-- Affichage des erreurs -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <!-- Message de succès -->
+                    @if (session('etat'))
+                        <div class="alert alert-success">
+                            {{ session('etat') }}
+                        </div>
+                    @endif
+
                     <form action="{{ route('enseignant.documents.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="cours_id" value="{{ $cours->id }}">
 
                         <div class="mb-3">
-                            <label for="titre" class="form-label">Titre</label>
-                            <input type="text" class="form-control" id="titre" name="titre" required>
+                            <label for="titre" class="form-label">Titre <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control @error('titre') is-invalid @enderror" 
+                                   id="titre" 
+                                   name="titre" 
+                                   value="{{ old('titre') }}"
+                                   required>
+                            @error('titre')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description (Optionnel)</label>
-                            <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                            <textarea class="form-control @error('description') is-invalid @enderror" 
+                                      id="description" 
+                                      name="description" 
+                                      rows="2">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label for="fichier" class="form-label">Fichier</label>
-                            <input type="file" class="form-control" id="fichier" name="fichier" required>
+                            <label for="fichier" class="form-label">Fichier <span class="text-danger">*</span></label>
+                            <input type="file" 
+                                   class="form-control @error('fichier') is-invalid @enderror" 
+                                   id="fichier" 
+                                   name="fichier" 
+                                   required>
+                            @error('fichier')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                             <div class="form-text">PDF, Word, PPT, Excel, Images, Archive (Max 10Mo)</div>
                         </div>
 

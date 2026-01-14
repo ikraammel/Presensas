@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -12,27 +13,56 @@ class DocumentController extends Controller
     // Enregistrer un nouveau document
     public function store(Request $request)
     {
-        $request->validate([
+        // Validation
+        $validated = $request->validate([
             'cours_id' => 'required|exists:cours,id',
             'titre' => 'required|string|max:255',
             'fichier' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,zip,jpg,png,jpeg|max:10240', // 10MB max
             'description' => 'nullable|string',
         ]);
 
-        $file = $request->file('fichier');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('documents', $fileName, 'public');
+        // Vérifier que l'enseignant a accès à ce cours
+        $user = Auth::user();
+        $coursIds = $user->cours->pluck('id')->toArray();
+        
+        if (!in_array($validated['cours_id'], $coursIds)) {
+            return redirect()->back()
+                ->withErrors(['erreur' => 'Vous n\'avez pas accès à ce module.'])
+                ->withInput();
+        }
 
-        Document::create([
-            'cours_id' => $request->cours_id,
-            'titre' => $request->titre,
-            'description' => $request->description,
-            'fichier' => $filePath,
-            'type_fichier' => $file->getClientOriginalExtension(),
-            'user_id' => Auth::id(),
-        ]);
+        try {
+            $file = $request->file('fichier');
+            
+            // Nettoyer le nom du fichier
+            $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+            
+            // Créer le dossier s'il n'existe pas
+            if (!Storage::disk('public')->exists('documents')) {
+                Storage::disk('public')->makeDirectory('documents');
+            }
+            
+            // Sauvegarder le fichier
+            $filePath = $file->storeAs('documents', $fileName, 'public');
 
-        return redirect()->back()->with('etat', 'Document ajouté avec succès.');
+            // Créer l'enregistrement dans la base de données
+            Document::create([
+                'cours_id' => $validated['cours_id'],
+                'titre' => $validated['titre'],
+                'description' => $validated['description'] ?? null,
+                'fichier' => $filePath,
+                'type_fichier' => $file->getClientOriginalExtension(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->back()
+                ->with('etat', 'Document ajouté et partagé avec succès !');
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['erreur' => 'Erreur lors de l\'upload du document : ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     // Supprimer un document
