@@ -130,6 +130,11 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::get('/enseignant/modules/{id}/delete', [EnseignantController::class, 'deleteModule'])->name('enseignant.modules.delete');
     Route::get('/enseignant/modules/{id}/link-classe', [EnseignantController::class, 'linkModuleToClasseForm'])->name('enseignant.modules.link-classe');
     Route::post('/enseignant/modules/{id}/link-classe', [EnseignantController::class, 'storeModuleClasseLink'])->name('enseignant.modules.link-classe');
+    Route::get('/enseignant/modules/{id}', [EnseignantController::class, 'showModule'])->name('enseignant.modules.show');
+
+    // Documents Enseignant
+    Route::post('/enseignant/documents', [\App\Http\Controllers\DocumentController::class, 'store'])->name('enseignant.documents.store');
+    Route::delete('/enseignant/documents/{id}', [\App\Http\Controllers\DocumentController::class, 'destroy'])->name('enseignant.documents.destroy');
 
     // Gestion des séances
     Route::get('/enseignant/seances', [EnseignantController::class, 'indexSeances'])->name('enseignant.seances.index');
@@ -149,12 +154,12 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::get('/enseignant/presences/{seanceId}/nfc', [EnseignantController::class, 'presenceNFCForm'])->name('enseignant.presences.nfc');
     Route::post('/enseignant/presences/{seanceId}/nfc/scan', [EnseignantController::class, 'scanNFC'])->name('enseignant.presences.nfc.scan');
 
-    // Documents
-    Route::get('/enseignant/documents', [EnseignantController::class, 'indexDocuments'])->name('enseignant.documents.index');
-    Route::get('/enseignant/documents/create', [EnseignantController::class, 'createDocumentForm'])->name('enseignant.documents.create');
-    Route::post('/enseignant/documents', [EnseignantController::class, 'storeDocument'])->name('enseignant.documents.store');
-    Route::get('/enseignant/documents/{id}/delete', [EnseignantController::class, 'deleteDocument'])->name('enseignant.documents.delete');
-    Route::get('/enseignant/documents/{id}/download', [EnseignantController::class, 'downloadDocument'])->name('enseignant.documents.download');
+    // Documents (Correct routes defined above)
+    // Route::get('/enseignant/documents', [EnseignantController::class, 'indexDocuments'])->name('enseignant.documents.index');
+    // Route::get('/enseignant/documents/create', [EnseignantController::class, 'createDocumentForm'])->name('enseignant.documents.create');
+    // Route::post('/enseignant/documents', [EnseignantController::class, 'storeDocument'])->name('enseignant.documents.store');
+    // Route::get('/enseignant/documents/{id}/delete', [EnseignantController::class, 'deleteDocument'])->name('enseignant.documents.delete');
+    Route::get('/enseignant/documents/{id}/download', [\App\Http\Controllers\DocumentController::class, 'download'])->name('enseignant.documents.download');
 
     // Annonces
     Route::get('/enseignant/annonces', [EnseignantController::class, 'indexAnnonces'])->name('enseignant.annonces.index');
@@ -184,6 +189,10 @@ Route::middleware(['auth', 'is_etudiant'])->group(function () {
     Route::get('/etudiant/absences', [EtudiantController::class, 'mesAbsences'])->name('etudiant.absences.liste');
     Route::get('/etudiant/absences/{presence}/justifier', [EtudiantController::class, 'formJustificatif'])->name('etudiant.absences.justifier');
     Route::post('/etudiant/absences/{presence}/justifier', [EtudiantController::class, 'envoyerJustificatif'])->name('etudiant.absences.envoyer');
+
+    // Modules Etudiant
+    Route::get('/etudiant/modules/{id}', [EtudiantController::class, 'showModule'])->name('etudiant.modules.show');
+    Route::get('/documents/download/{id}', [\App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
 });
 
 

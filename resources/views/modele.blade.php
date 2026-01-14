@@ -221,11 +221,11 @@
                         <i class="bi bi-mortarboard me-2"></i>Étudiant
                     </div>
 
-                    <!-- Nav Item - Dashboard -->
+                    <!-- Nav Item - Mes Cours -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('etudiant.home') }}">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Tableau de bord</span>
+                        <a class="nav-link" href="{{ route('etudiant.home') }}#cours">
+                            <i class="bi bi-book-fill"></i>
+                            <span>Mes Cours</span>
                         </a>
                     </li>
 

@@ -15,32 +15,32 @@ class AdminController extends Controller
     {
         // Compter les utilisateurs non validés
         $usersNonValides = User::where('type', null)->count();
-        
+
         // Compter les utilisateurs par type
         $totalUsers = User::count();
         $totalAdmins = User::where('type', 'admin')->count();
         $totalEnseignants = User::where('type', 'enseignant')->count();
-        
+
         // Compter les étudiants
         $totalEtudiants = Etudiants::count();
-        
+
         // Compter les cours/modules
         $totalCours = Cours::count();
-        
+
         // Compter les séances
         $totalSeances = Seances::count();
-        
+
         // Calculer le taux de présence
         $totalPresences = Presences::count();
         $presentCount = Presences::where('statut', 'present')->count();
         $tauxPresence = $totalPresences > 0 ? round(($presentCount / $totalPresences) * 100, 1) : 0;
-        
+
         // Récupérer les dernières activités
         $dernieresSeances = Seances::orderBy('date_debut', 'desc')->limit(5)->get();
-        
+
         // Récupérer les utilisateurs en attente de validation
         $utilisateursEnAttente = User::where('type', null)->limit(5)->get();
-        
+
         return view('admin.home', [
             'usersNonValides' => $usersNonValides,
             'totalUsers' => $totalUsers,
@@ -59,7 +59,7 @@ class AdminController extends Controller
     {
         $totalEtudiants = Etudiants::count();
         $etudiants = Etudiants::paginate(15);
-        
+
         return view('admin.etudiants', [
             'totalEtudiants' => $totalEtudiants,
             'etudiants' => $etudiants,
@@ -68,9 +68,14 @@ class AdminController extends Controller
 
     public function enseignants()
     {
-        $totalEnseignants = User::where('type', 'enseignant')->count();
-        $enseignants = User::where('type', 'enseignant')->paginate(15);
-        
+        $query = User::where(function ($q) {
+            $q->where('type', 'enseignant')
+                ->orWhere('type_demande', 'enseignant');
+        });
+
+        $totalEnseignants = $query->count();
+        $enseignants = $query->paginate(15);
+
         return view('admin.enseignants', [
             'totalEnseignants' => $totalEnseignants,
             'enseignants' => $enseignants,

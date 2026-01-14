@@ -19,7 +19,7 @@ class EtudiantController extends Controller
         // Trouver l'étudiant correspondant (via nom/prénom)
         $etudiant = \App\Models\Etudiants::where('nom', $user->nom)
             ->where('prenom', $user->prenom)
-            ->with(['groupe.user']) // Charger le groupe et son prof
+            ->with(['groupe.user', 'groupe.cours', 'cours']) // Load Group/Teacher, Group Courses, Direct Courses
             ->first();
 
         return view('etudiant.home', [
@@ -110,5 +110,33 @@ class EtudiantController extends Controller
         }
 
         return redirect()->route('etudiant.absences.liste');
+    }
+
+    // Afficher les détails d'un module et ses documents
+    public function showModule($id)
+    {
+        $user = Auth::user();
+        // Récupérer l'étudiant
+        $etudiant = \App\Models\Etudiants::where('nom', $user->nom)->where('prenom', $user->prenom)->firstOrFail();
+
+        // Vérifier si l'étudiant a ce cours (soit directement via cours_etudiants, soit via son groupe)
+        // Check direct enrollment
+        $cours = $etudiant->cours()->where('cours.id', $id)->with('documents')->first();
+
+        // If not found, check via group
+        if (!$cours && $etudiant->groupe) {
+            $cours = $etudiant->groupe->cours()->where('cours.id', $id)->with('documents')->first();
+        }
+
+        // If still not found, check via group teacher (courses owned by the teacher of the group)
+        if (!$cours && $etudiant->groupe && $etudiant->groupe->user) {
+            $cours = $etudiant->groupe->user->cours()->where('cours.id', $id)->with('documents')->first();
+        }
+
+        if (!$cours) {
+            abort(403, 'Accès non autorisé à ce module.');
+        }
+
+        return view('etudiant.modules.show', compact('cours'));
     }
 }

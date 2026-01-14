@@ -11,16 +11,18 @@ class Etudiants extends Model
 
     protected $table = 'etudiants';
 
-    public $timestamps = false;
+    // public $timestamps = false;
 
-    protected $fillable = ['id','nom','prenom','noet', 'cne', 'groupe_id', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'nom', 'prenom', 'noet', 'cne', 'groupe_id'];
 
 
-    public function cours(){
-        return $this->belongsToMany(Cours::class,'cours_etudiants', 'etudiant_id', 'cours_id');
+    public function cours()
+    {
+        return $this->belongsToMany(Cours::class, 'cours_etudiants', 'etudiant_id', 'cours_id');
     }
 
-    public function seances(){
+    public function seances()
+    {
         return $this->belongsToMany(Seances::class, 'presences', 'etudiant_id', 'seance_id');
     }
 

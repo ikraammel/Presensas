@@ -8,34 +8,34 @@
         .table-enseignant {
             border-collapse: collapse;
         }
-        
+
         .table-enseignant thead {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
         }
-        
+
         .table-enseignant thead th {
             padding: 15px;
             font-weight: 600;
             letter-spacing: 0.5px;
             border: none;
         }
-        
+
         .table-enseignant tbody td {
             padding: 12px 15px;
             border-bottom: 1px solid #ecf0f1;
             vertical-align: middle;
         }
-        
+
         .table-enseignant tbody tr:hover {
             background-color: #ecf0f1;
             transition: all 0.3s ease;
         }
-        
+
         .table-enseignant tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-        
+
         .badge-module {
             background-color: #d6eaf8;
             color: #0c5aa0;
@@ -44,16 +44,16 @@
             font-weight: 600;
             display: inline-block;
         }
-        
+
         .page-title {
             color: #2c3e50;
             margin-bottom: 25px;
             font-weight: 700;
         }
-        
+
         .card-enseignant {
             border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border-radius: 8px;
         }
     </style>
@@ -96,7 +96,7 @@
                                         <span class="badge bg-info">{{ $module->seances->count() }} séance(s)</span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('enseignant.cours.show', $module->id) }}" class="btn btn-sm btn-info">
+                                        <a href="{{ route('enseignant.modules.show', $module->id) }}" class="btn btn-sm btn-info">
                                             <i class="bi bi-eye me-1"></i>Voir
                                         </a>
                                     </td>

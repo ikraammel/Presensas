@@ -211,6 +211,17 @@ class EnseignantController extends Controller
         ]);
     }
 
+    // Afficher les détails d'un module (cours) avec ses documents
+    public function showModule($id)
+    {
+        $user = Auth::user();
+        // Vérifier que le cours appartient bien à l'enseignant ou est assigné
+        // Ici on suppose que $user->cours contient les cours assignés
+        $cours = $user->cours()->where('cours.id', $id)->with('documents')->firstOrFail();
+
+        return view('enseignant.modules.show', compact('cours'));
+    }
+
     // Afficher le profil de l'enseignant
     public function showProfil()
     {

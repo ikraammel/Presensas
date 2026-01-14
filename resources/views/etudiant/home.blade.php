@@ -123,4 +123,54 @@
         </div>
     @endif
 
+    <!-- Section Mes Cours -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mes Modules (Cours)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @php
+                            $coursDirects = $etudiant->cours ?? collect();
+                            $coursGroupe = $etudiant->groupe->cours ?? collect();
+                            $coursProf = $etudiant->groupe && $etudiant->groupe->user ? $etudiant->groupe->user->cours : collect();
+                            $tousLesCours = $coursDirects->merge($coursGroupe)->merge($coursProf)->unique('id');
+                        @endphp
+
+                        @forelse($tousLesCours as $cours)
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                    {{ Str::limit($cours->intitule, 20) }}
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <a href="{{ route('etudiant.modules.show', $cours->id) }}"
+                                                        class="text-decoration-none stretched-link">
+                                                        Voir le cours
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="bi bi-book fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-12">
+                                <div class="alert alert-info">Aucun cours assigné pour le moment.</div>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
