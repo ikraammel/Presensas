@@ -229,6 +229,14 @@
                         </a>
                     </li>
 
+                    <!-- Nav Item - Mon QR Code -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.qrcode') }}">
+                            <i class="bi bi-qr-code"></i>
+                            <span>Mon QR Code</span>
+                        </a>
+                    </li>
+
                     <!-- Nav Item - Absences -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('etudiant.absences.liste') }}">
@@ -268,51 +276,7 @@
                             <span>Déconnexion</span>
                         </a>
                     </li>
-                @elseif(Auth::user()->type === 'gestionnaire')
-                    <!-- Heading - Gestionnaire Section -->
-                    <div class="sidebar-heading">
-                        <i class="bi bi-gear me-2"></i>Gestion
-                    </div>
 
-                    <!-- Nav Item - Dashboard -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('gestionnaire.home') }}">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Tableau de bord</span>
-                        </a>
-                    </li>
-
-                    <!-- Divider -->
-                    <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
-
-                    <!-- Heading - Account -->
-                    <div class="sidebar-heading">
-                        <i class="bi bi-person-circle me-2"></i>Compte
-                    </div>
-
-                    <!-- Nav Item - Change Password -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('gestionnaire.account.edit') }}">
-                            <i class="bi bi-key"></i>
-                            <span>Changer Mot de passe</span>
-                        </a>
-                    </li>
-
-                    <!-- Nav Item - Profile -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('gestionnaire.profil') }}">
-                            <i class="bi bi-person"></i>
-                            <span>Profil</span>
-                        </a>
-                    </li>
-
-                    <!-- Nav Item - Logout -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Déconnexion</span>
-                        </a>
-                    </li>
                 @else
                     <!-- Heading - Interface Section (Non-Admin, Non-Enseignant) -->
                     <div class="sidebar-heading">

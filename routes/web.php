@@ -145,6 +145,7 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::get('/enseignant/seances/{id}/delete', [EnseignantController::class, 'deleteSeance'])->name('enseignant.seances.delete');
     Route::get('/enseignant/seances/calendrier', [EnseignantController::class, 'calendarSeances'])->name('enseignant.seances.calendrier');
     Route::get('/enseignant/seances/{id}/qr-code', [EnseignantController::class, 'generateQRCode'])->name('enseignant.seances.qr-code');
+    Route::get('/enseignant/seances/{id}/pdf', [EnseignantController::class, 'generateFeuillePresence'])->name('enseignant.seances.pdf');
 
     // Enregistrement présence
     Route::get('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'presenceManuelleForm'])->name('enseignant.presences.manuel');
@@ -193,6 +194,7 @@ Route::middleware(['auth', 'is_etudiant'])->group(function () {
     // Modules Etudiant
     Route::get('/etudiant/modules/{id}', [EtudiantController::class, 'showModule'])->name('etudiant.modules.show');
     Route::get('/documents/download/{id}', [\App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
+    Route::get('/etudiant/qrcode', [EtudiantController::class, 'showQRCode'])->name('etudiant.qrcode');
 });
 
 
