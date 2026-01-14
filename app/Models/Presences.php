@@ -15,12 +15,14 @@ class Presences extends Model
 
     protected $fillable = ['etudiant_id', 'seance_id', 'statut', 'justificatif', 'date_enregistrement'];
 
-    public function etudiants(){
-        return $this->belongsTo(Etudiants::class);
+    public function etudiants()
+    {
+        return $this->belongsTo(Etudiants::class, 'etudiant_id');
     }
     //'etudiant_id'
 
-    public function seances(){
+    public function seances()
+    {
         return $this->belongsTo(Seances::class, 'seance_id');
     }
 }

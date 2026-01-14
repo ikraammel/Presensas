@@ -167,8 +167,17 @@
                         </a>
                     </li>
 
+                    <!-- Nav Item - Absences -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.absences.liste') }}">
+                            <i class="bi bi-file-earmark-check"></i>
+                            <span>Validations</span>
+                        </a>
+                    </li>
+
                     <!-- Divider -->
                     <hr class="sidebar-divider" style="border-top: 1px solid rgba(255,255,255,0.15);">
+
 
                     <!-- Heading - Account -->
                     <div class="sidebar-heading">
@@ -209,6 +218,14 @@
                         <a class="nav-link" href="{{ route('etudiant.home') }}">
                             <i class="bi bi-speedometer2"></i>
                             <span>Tableau de bord</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Absences -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.absences.liste') }}">
+                            <i class="bi bi-file-earmark-medical"></i>
+                            <span>Mes Absences</span>
                         </a>
                     </li>
 

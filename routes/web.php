@@ -87,6 +87,10 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::get('/enseignant/seance/showListeEnseignant/{id}', [EnseignantController::class, 'showEnseignantList'])->name('enseignant.cours.show');
 
     // Gestion des classes
+    // Validation des justifications d'absence
+    Route::get('/enseignant/absences', [EnseignantController::class, 'listeAbsences'])->name('enseignant.absences.liste');
+    Route::post('/enseignant/absences/{presence}/valider', [EnseignantController::class, 'validerJustificatif'])->name('enseignant.absences.valider');
+    Route::post('/enseignant/absences/{presence}/refuser', [EnseignantController::class, 'refuserJustificatif'])->name('enseignant.absences.refuser');
     Route::get('/enseignant/classes', [EnseignantController::class, 'indexClasses'])->name('enseignant.classes.index');
     Route::get('/enseignant/classes/create', [EnseignantController::class, 'createClasseForm'])->name('enseignant.classes.create');
     Route::post('/enseignant/classes', [EnseignantController::class, 'storeClasse'])->name('enseignant.classes.store');
@@ -152,11 +156,18 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
 
 /*===================== Étudiant =======================*/
 Route::middleware(['auth', 'is_etudiant'])->group(function () {
+    // Dashboard & Profil
     Route::get('/etudiant', [EtudiantController::class, 'index'])->name('etudiant.home');
     Route::get('/etudiant/profil', [EtudiantController::class, 'showProfil'])->name('etudiant.profil');
     Route::get('/etudiant/editMdp', [EtudiantController::class, 'editFormMdp'])->name('etudiant.account.edit');
     Route::post('/etudiant/editMdp', [EtudiantController::class, 'editMdp'])->name('etudiant.account.edit');
+
+    // Justification d'absence
+    Route::get('/etudiant/absences', [EtudiantController::class, 'mesAbsences'])->name('etudiant.absences.liste');
+    Route::get('/etudiant/absences/{presence}/justifier', [EtudiantController::class, 'formJustificatif'])->name('etudiant.absences.justifier');
+    Route::post('/etudiant/absences/{presence}/justifier', [EtudiantController::class, 'envoyerJustificatif'])->name('etudiant.absences.envoyer');
 });
+
 
 /*===================== Gestionnaire =======================*/
 Route::middleware(['auth', 'is_gestionnaire'])->group(function () {

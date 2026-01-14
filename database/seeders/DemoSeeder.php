@@ -32,12 +32,21 @@ class DemoSeeder extends Seeder
             'type' => 'admin',
         ]);
 
-        // Créer des enseignants
+        // Créer un enseignant de démonstration fixe
+        User::create([
+            'nom' => 'Professeur',
+            'prenom' => 'Démo',
+            'login' => 'enseignant',
+            'mdp' => Hash::make('password'),
+            'type' => 'enseignant',
+        ]);
+
+        // Créer d'autres enseignants aléatoires
         for ($i = 1; $i <= 5; $i++) {
             User::create([
                 'nom' => $faker->lastName,
                 'prenom' => $faker->firstName,
-                'login' => "enseignant$i",
+                'login' => "enseignant$i", // enseignant1, enseignant2...
                 'mdp' => Hash::make('password'),
                 'type' => 'enseignant',
             ]);
@@ -79,7 +88,24 @@ class DemoSeeder extends Seeder
         $groupe2 = Groupe::create(['nom' => 'Groupe 2']);
         $groupe3 = Groupe::create(['nom' => 'Groupe 3']);
 
-        // Créer des étudiants (Table Etudiants + Table Users pour login)
+        // Créer un étudiant de démonstration fixe
+        Etudiants::create([
+            'nom' => 'Etudiant',
+            'prenom' => 'Démo',
+            'noet' => 'ETDEMO',
+            'cne' => 'CNEDEMO',
+            'groupe_id' => 1,
+        ]);
+
+        User::create([
+            'nom' => 'Etudiant',
+            'prenom' => 'Démo',
+            'login' => 'etudiant',
+            'mdp' => Hash::make('password'),
+            'type' => 'etudiant',
+        ]);
+
+        // Créer des étudiants aléatoires (Table Etudiants + Table Users pour login)
         for ($i = 1; $i <= 30; $i++) {
             $nom = $faker->lastName;
             $prenom = $faker->firstName;
@@ -99,11 +125,12 @@ class DemoSeeder extends Seeder
             User::create([
                 'nom' => $nom,
                 'prenom' => $prenom,
-                'login' => "etudiant$i",
+                'login' => "etudiant$i", // etudiant1, etudiant2...
                 'mdp' => Hash::make('password'),
                 'type' => 'etudiant',
             ]);
         }
+
 
         // Créer des cours
         $coursTitles = [
@@ -120,11 +147,19 @@ class DemoSeeder extends Seeder
             'Technologie',
             'Arts Plastiques',
         ];
-
+        $coursIds = [];
         foreach ($coursTitles as $title) {
-            Cours::create([
+            $cours = Cours::create([
                 'intitule' => $title,
             ]);
+            $coursIds[] = $cours->id;
+        }
+
+        // Associer chaque enseignant à 2-3 cours aléatoires
+        $enseignants = User::where('type', 'enseignant')->get();
+        foreach ($enseignants as $enseignant) {
+            $randomCours = collect($coursIds)->shuffle()->take(rand(2,3))->all();
+            $enseignant->cours()->syncWithoutDetaching($randomCours);
         }
 
         // Créer des séances

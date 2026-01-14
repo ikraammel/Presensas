@@ -214,4 +214,50 @@ class EnseignantController extends Controller
         $user = Auth::user();
         return view('enseignant.account.profil', ['user' => $user]);
     }
+
+    // Lister les absences avec justificatifs à valider
+    public function listeAbsences()
+    {
+        $user = Auth::user();
+        $coursIds = $user->cours->pluck('id');
+
+        // Récupérer les présences (absences) pour les cours de l'enseignant qui ont un justificatif
+        $presences = Presences::whereHas('seances', function ($query) use ($coursIds) {
+            $query->whereIn('cours_id', $coursIds);
+        })
+            ->where('statut', 'absent')
+            ->whereNotNull('justificatif') // Seulement ceux qui ont soumis quelque chose
+            ->with(['etudiants', 'seances.cours'])
+            ->orderBy('statut_justificatif', 'desc') // En attente d'abord si on trie ou autre
+            ->orderBy('date_enregistrement', 'desc')
+            ->get();
+
+        return view('enseignant.absences.index', [
+            'presences' => $presences
+        ]);
+    }
+
+    // Valider un justificatif
+    public function validerJustificatif(Request $request, $id)
+    {
+        $presence = Presences::findOrFail($id);
+        $presence->statut_justificatif = 'valide';
+        // Optionnel : changer le statut global 'absent' -> 'justifie' ou similaire si la logique métier le demande
+        // $presence->statut = 'justifie'; 
+        $presence->save();
+
+        $request->session()->flash('etat', 'Justificatif validé.');
+        return redirect()->back();
+    }
+
+    // Refuser un justificatif
+    public function refuserJustificatif(Request $request, $id)
+    {
+        $presence = Presences::findOrFail($id);
+        $presence->statut_justificatif = 'refuse';
+        $presence->save();
+
+        $request->session()->flash('etat', 'Justificatif refusé.');
+        return redirect()->back();
+    }
 }
