@@ -161,9 +161,17 @@
 
                     <!-- Nav Item - Seances -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('enseignant.showSeance') }}">
+                        <a class="nav-link" href="{{ route('enseignant.seances.index') }}">
                             <i class="bi bi-calendar-event"></i>
                             <span>Mes Séances</span>
+                        </a>
+                    </li>
+
+                    <!-- Nav Item - Classes -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('enseignant.classes.index') }}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Mes Classes</span>
                         </a>
                     </li>
 
@@ -220,6 +228,14 @@
                     <div class="sidebar-heading">
                         <i class="bi bi-mortarboard me-2"></i>Étudiant
                     </div>
+
+                    <!-- Nav Item - Mes Séances -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('etudiant.seances.index') }}">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Mes Séances</span>
+                        </a>
+                    </li>
 
                     <!-- Nav Item - Mes Cours -->
                     <li class="nav-item">

@@ -155,7 +155,12 @@
                         <p class="text-muted">Aucune séance à venir.</p>
                     @endforelse
                     <div class="mt-3">
-                        <a href="{{ route('enseignant.showSeance') }}" class="btn btn-primary btn-sm">Voir toutes les séances</a>
+                        <a href="{{ route('enseignant.seances.index') }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-calendar-event"></i> Mes séances
+                        </a>
+                        <a href="{{ route('enseignant.seances.create') }}" class="btn btn-success btn-sm">
+                            <i class="bi bi-plus-circle"></i> Créer une séance
+                        </a>
                         <a href="{{ route('enseignant.cours.show', $user->id) }}" class="btn btn-info btn-sm">Mes cours</a>
                     </div>
                 </div>

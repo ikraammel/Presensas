@@ -307,35 +307,150 @@ class EnseignantController extends Controller
         ]);
     }
 
-    // Formulaire de scan QR Code pour une séance
-    public function presenceQRCodeForm($seanceId)
+    // Page principale d'enregistrement de présence (avec onglets)
+    public function enregistrerPresence($seanceId)
     {
-        $seance = Seances::with('cours')->findOrFail($seanceId);
-        return view('enseignant.presences.scan', compact('seance'));
+        $user = Auth::user();
+        $seance = Seances::with(['cours', 'groupe.etudiants', 'presences.etudiants'])->findOrFail($seanceId);
+        
+        // Vérifier que la séance appartient à un cours de l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($seance->cours_id, $coursIds)) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        // Récupérer les étudiants de la classe directement via le groupe de la séance
+        if (!$seance->groupe_id) {
+            abort(404, 'Cette séance n\'est pas associée à une classe.');
+        }
+
+        // Vérifier que le groupe appartient à l'enseignant
+        if ($seance->groupe->user_id != $user->id) {
+            abort(403, 'Vous n\'avez pas accès à cette classe.');
+        }
+
+        $etudiants = $seance->groupe->etudiants;
+
+        // Récupérer les présences déjà enregistrées
+        $presencesExistantes = Presences::where('seance_id', $seanceId)
+            ->with('etudiants')
+            ->get()
+            ->keyBy('etudiant_id');
+
+        // Générer ou récupérer le QR code
+        if (!$seance->qr_token || ($seance->qr_expires_at && now() > $seance->qr_expires_at)) {
+            $seance->qr_token = Str::random(32);
+            $seance->qr_expires_at = $seance->date_fin;
+            $seance->save();
+        }
+
+        // Statistiques
+        $stats = [
+            'present' => Presences::where('seance_id', $seanceId)->where('statut', 'present')->count(),
+            'absent' => Presences::where('seance_id', $seanceId)->where('statut', 'absent')->count(),
+            'retard' => Presences::where('seance_id', $seanceId)->where('statut', 'retard')->count(),
+            'total' => $etudiants->count(),
+        ];
+
+        return view('enseignant.presences.index', compact('seance', 'etudiants', 'presencesExistantes', 'stats'));
     }
 
-    // Traitement du scan QR (AJAX)
+    // Enregistrement manuel des présences
+    public function storePresenceManuelle(Request $request, $seanceId)
+    {
+        $user = Auth::user();
+        $seance = Seances::findOrFail($seanceId);
+        
+        // Vérifier que la séance appartient à un cours de l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($seance->cours_id, $coursIds)) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        $request->validate([
+            'presences' => 'required|array',
+            'presences.*.etudiant_id' => 'required|exists:etudiants,id',
+            'presences.*.statut' => 'required|in:present,absent,retard',
+        ]);
+
+        foreach ($request->presences as $presenceData) {
+            Presences::updateOrCreate(
+                [
+                    'seance_id' => $seanceId,
+                    'etudiant_id' => $presenceData['etudiant_id'],
+                ],
+                [
+                    'statut' => $presenceData['statut'],
+                    'date_enregistrement' => now(),
+                ]
+            );
+        }
+
+        $request->session()->flash('etat', 'Présences enregistrées avec succès !');
+        return redirect()->route('enseignant.presences.manuel', $seanceId);
+    }
+
+    // Formulaire de scan QR Code pour une séance (ancienne méthode, gardée pour compatibilité)
+    public function presenceQRCodeForm($seanceId)
+    {
+        return $this->enregistrerPresence($seanceId);
+    }
+
+    // Traitement du scan QR (AJAX) - Route publique pour les étudiants
     public function scanQRCode(Request $request)
     {
         $request->validate([
-            'seance_id' => 'required|exists:seances,id',
+            'token' => 'required|string',
             'noet' => 'required|exists:etudiants,noet'
         ]);
 
-        $seance = Seances::findOrFail($request->seance_id);
-        $etudiant = Etudiants::where('noet', $request->noet)->firstOrFail();
+        // Trouver la séance par token
+        $seance = Seances::where('qr_token', $request->token)
+            ->where('qr_expires_at', '>=', now())
+            ->first();
 
-        // Vérifier si déjà présent
-        $exists = Presences::where('seance_id', $seance->id)
-            ->where('etudiant_id', $etudiant->id)
-            ->exists();
-
-        if ($exists) {
-            // Si déjà noté, on considère succès (neutre)
+        if (!$seance) {
             return response()->json([
                 'success' => false,
-                'message' => 'Étudiant déjà noté présent.'
-            ]);
+                'message' => 'QR Code invalide ou expiré.'
+            ], 400);
+        }
+
+        // Vérifier que la séance est en cours
+        if (now() < $seance->date_debut || now() > $seance->date_fin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La séance n\'est pas en cours.'
+            ], 400);
+        }
+
+        $etudiant = Etudiants::where('noet', $request->noet)->firstOrFail();
+
+        // Vérifier que l'étudiant appartient au groupe de la séance
+        if (!$seance->groupe_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cette séance n\'est pas associée à une classe.'
+            ], 400);
+        }
+
+        if ($etudiant->groupe_id != $seance->groupe_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous n\'êtes pas inscrit à cette classe.'
+            ], 403);
+        }
+
+        // Vérifier si déjà présent
+        $presenceExistante = Presences::where('seance_id', $seance->id)
+            ->where('etudiant_id', $etudiant->id)
+            ->first();
+
+        if ($presenceExistante) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous avez déjà marqué votre présence.'
+            ], 400);
         }
 
         // Marquer présent
@@ -344,16 +459,165 @@ class EnseignantController extends Controller
             'etudiant_id' => $etudiant->id,
             'statut' => 'present',
             'date_enregistrement' => now(),
-            'statut_justificatif' => null
         ]);
-        
-        // Attacher si besoin via relation (optionnel si Presences est la table pivot)
-        // $seance->etudiants()->attach($etudiant->id, ['statut' => 'present', 'date_enregistrement' => now()]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Présence enregistrée pour ' . $etudiant->prenom . ' ' . $etudiant->nom
+            'message' => 'Présence enregistrée avec succès !'
         ]);
+    }
+
+    // Récupérer les présences en temps réel (AJAX)
+    public function getPresencesRealtime($seanceId)
+    {
+        $seance = Seances::with(['presences.etudiants'])->findOrFail($seanceId);
+        
+        $presences = $seance->presences->map(function($presence) {
+            return [
+                'id' => $presence->id,
+                'etudiant' => $presence->etudiants->nom . ' ' . $presence->etudiants->prenom,
+                'noet' => $presence->etudiants->noet,
+                'statut' => $presence->statut,
+                'date' => $presence->date_enregistrement->format('H:i:s'),
+            ];
+        });
+
+        $stats = [
+            'present' => Presences::where('seance_id', $seanceId)->where('statut', 'present')->count(),
+            'absent' => Presences::where('seance_id', $seanceId)->where('statut', 'absent')->count(),
+            'retard' => Presences::where('seance_id', $seanceId)->where('statut', 'retard')->count(),
+        ];
+
+        return response()->json([
+            'presences' => $presences,
+            'stats' => $stats,
+        ]);
+    }
+
+    // Afficher la liste des séances
+    public function indexSeances()
+    {
+        $user = Auth::user();
+        $coursIds = $user->cours->pluck('id')->toArray();
+        
+        $seances = Seances::whereIn('cours_id', $coursIds)
+            ->with(['cours', 'groupe'])
+            ->orderBy('date_debut', 'desc')
+            ->paginate(15);
+
+        return view('enseignant.seances.index', compact('seances'));
+    }
+
+    // Formulaire de création de séance
+    public function createSeanceForm()
+    {
+        $user = Auth::user();
+        $cours = $user->cours;
+        $groupes = Groupe::where('user_id', $user->id)
+            ->with('etudiants')
+            ->get();
+
+        return view('enseignant.seances.create', compact('cours', 'groupes'));
+    }
+
+    // Enregistrer une nouvelle séance
+    public function storeSeance(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'date_debut' => 'required|date|after_or_equal:today',
+            'date_fin' => 'required|date|after:date_debut',
+            'type_seance' => 'required|in:cours,TD,TP',
+        ]);
+
+        // Vérifier que le cours appartient à l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($request->cours_id, $coursIds)) {
+            return back()->withErrors(['cours_id' => 'Vous n\'avez pas accès à ce cours.'])->withInput();
+        }
+
+        // Vérifier que le groupe appartient à l'enseignant
+        $groupe = Groupe::findOrFail($request->groupe_id);
+        if ($groupe->user_id != $user->id) {
+            return back()->withErrors(['groupe_id' => 'Vous n\'avez pas accès à cette classe.'])->withInput();
+        }
+
+        $seance = Seances::create([
+            'cours_id' => $request->cours_id,
+            'groupe_id' => $request->groupe_id,
+            'date_debut' => $request->date_debut,
+            'date_fin' => $request->date_fin,
+            'type_seance' => $request->type_seance,
+            'type' => 'présentiel',
+        ]);
+
+        $request->session()->flash('etat', 'Séance créée avec succès !');
+        return redirect()->route('enseignant.seances.index');
+    }
+
+    // Formulaire d'édition de séance
+    public function editSeanceForm($id)
+    {
+        $user = Auth::user();
+        $seance = Seances::with(['cours', 'groupe'])->findOrFail($id);
+        
+        // Vérifier que la séance appartient à l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($seance->cours_id, $coursIds)) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        $cours = $user->cours;
+        $groupes = Groupe::where('user_id', $user->id)
+            ->with('etudiants')
+            ->get();
+
+        return view('enseignant.seances.edit', compact('seance', 'cours', 'groupes'));
+    }
+
+    // Mettre à jour une séance
+    public function updateSeance(Request $request, $id)
+    {
+        $user = Auth::user();
+        $seance = Seances::findOrFail($id);
+        
+        // Vérifier que la séance appartient à l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($seance->cours_id, $coursIds)) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'date_debut' => 'required|date',
+            'date_fin' => 'required|date|after:date_debut',
+            'type_seance' => 'required|in:cours,TD,TP',
+        ]);
+
+        $seance->update($request->all());
+        $request->session()->flash('etat', 'Séance mise à jour avec succès !');
+        return redirect()->route('enseignant.seances.index');
+    }
+
+    // Supprimer une séance
+    public function deleteSeance($id)
+    {
+        $user = Auth::user();
+        $seance = Seances::findOrFail($id);
+        
+        // Vérifier que la séance appartient à l'enseignant
+        $coursIds = $user->cours->pluck('id')->toArray();
+        if (!in_array($seance->cours_id, $coursIds)) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        $seance->delete();
+        session()->flash('etat', 'Séance supprimée avec succès !');
+        return redirect()->route('enseignant.seances.index');
     }
 
     // Générer la feuille de présence PDF

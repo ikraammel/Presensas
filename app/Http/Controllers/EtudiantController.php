@@ -148,4 +148,83 @@ class EtudiantController extends Controller
 
         return view('etudiant.qrcode', compact('etudiant'));
     }
+
+    // Afficher les séances de l'étudiant
+    public function mesSeances()
+    {
+        $user = Auth::user();
+        $etudiant = \App\Models\Etudiants::where('nom', $user->nom)
+            ->where('prenom', $user->prenom)
+            ->with('groupe')
+            ->first();
+
+        if (!$etudiant) {
+            return back()->withErrors(['error' => 'Profil étudiant introuvable.']);
+        }
+
+        // Récupérer les séances de la classe de l'étudiant
+        $seances = \App\Models\Seances::where('groupe_id', $etudiant->groupe_id)
+            ->with(['cours', 'groupe'])
+            ->orderBy('date_debut', 'desc')
+            ->get();
+
+        // Charger les présences pour chaque séance
+        $seanceIds = $seances->pluck('id')->toArray();
+        $presences = \App\Models\Presences::where('etudiant_id', $etudiant->id)
+            ->whereIn('seance_id', $seanceIds)
+            ->get()
+            ->keyBy('seance_id');
+
+        // Attacher les présences aux séances
+        foreach ($seances as $seance) {
+            $seance->presence = $presences->get($seance->id);
+        }
+
+        return view('etudiant.seances.index', [
+            'seances' => $seances,
+            'etudiant' => $etudiant,
+            'user' => $user
+        ]);
+    }
+
+    // Afficher une séance spécifique avec QR code
+    public function showSeance($id)
+    {
+        $user = Auth::user();
+        $etudiant = \App\Models\Etudiants::where('nom', $user->nom)
+            ->where('prenom', $user->prenom)
+            ->first();
+
+        if (!$etudiant) {
+            return back()->withErrors(['error' => 'Profil étudiant introuvable.']);
+        }
+
+        $seance = \App\Models\Seances::with(['cours', 'groupe'])->findOrFail($id);
+
+        // Vérifier que la séance appartient à la classe de l'étudiant
+        if ($seance->groupe_id != $etudiant->groupe_id) {
+            abort(403, 'Vous n\'avez pas accès à cette séance.');
+        }
+
+        // Vérifier si l'étudiant a déjà marqué sa présence
+        $presence = \App\Models\Presences::where('seance_id', $id)
+            ->where('etudiant_id', $etudiant->id)
+            ->first();
+
+        // Générer le QR code si la séance est en cours
+        $canScan = false;
+        $qrUrl = null;
+        if ($seance->qr_token && now() >= $seance->date_debut && now() <= $seance->date_fin) {
+            $canScan = true;
+            $qrUrl = route('scan.qr') . '?token=' . $seance->qr_token;
+        }
+
+        return view('etudiant.seances.show', [
+            'seance' => $seance,
+            'etudiant' => $etudiant,
+            'presence' => $presence,
+            'canScan' => $canScan,
+            'qrUrl' => $qrUrl
+        ]);
+    }
 }

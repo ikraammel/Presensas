@@ -123,6 +123,62 @@
         </div>
     @endif
 
+    <!-- Section Mes Séances -->
+    @if(isset($etudiant) && $etudiant->groupe)
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Mes Séances</h6>
+                        <a href="{{ route('etudiant.seances.index') }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-calendar-event"></i> Voir toutes les séances
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @php
+                            $seancesRecentes = \App\Models\Seances::where('groupe_id', $etudiant->groupe_id)
+                                ->where('date_debut', '>=', now())
+                                ->with(['cours', 'presences' => function($query) use ($etudiant) {
+                                    $query->where('etudiant_id', $etudiant->id);
+                                }])
+                                ->orderBy('date_debut', 'asc')
+                                ->take(5)
+                                ->get();
+                        @endphp
+                        @if($seancesRecentes->count() > 0)
+                            <div class="list-group">
+                                @foreach($seancesRecentes as $seance)
+                                    @php
+                                        $presence = $seance->presences->first();
+                                        $isEnCours = now() >= $seance->date_debut && now() <= $seance->date_fin;
+                                    @endphp
+                                    <a href="{{ route('etudiant.seances.show', $seance->id) }}" 
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ $seance->cours->intitule }}</h6>
+                                            @if($isEnCours && !$presence)
+                                                <span class="badge bg-warning">Scanner QR</span>
+                                            @elseif($presence)
+                                                <span class="badge bg-success">Présent</span>
+                                            @endif
+                                        </div>
+                                        <p class="mb-1">
+                                            {{ \Carbon\Carbon::parse($seance->date_debut)->format('d/m/Y') }} - 
+                                            {{ \Carbon\Carbon::parse($seance->date_debut)->format('H:i') }}
+                                        </p>
+                                        <small class="text-muted">{{ $seance->type_seance ?? 'Cours' }}</small>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted mb-0">Aucune séance à venir.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Section Mes Cours -->
     <div class="row">
         <div class="col-12">

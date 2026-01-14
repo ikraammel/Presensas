@@ -6,13 +6,16 @@
     @auth
         @switch($type = Auth::user()->type)
             @case('admin')
-                <meta http-equiv="refresh" content="0; URL=http://localhost/admin" />
+                <meta http-equiv="refresh" content="0; URL={{ url('/admin') }}" />
             @break
             @case('enseignant')
-                <meta http-equiv="refresh" content="0; URL=http://localhost/enseignant" />
+                <meta http-equiv="refresh" content="0; URL={{ url('/enseignant') }}" />
+            @break
+            @case('etudiant')
+                <meta http-equiv="refresh" content="0; URL={{ url('/etudiant') }}" />
             @break
             @default
-                <!-- Student stays here -->
+                <!-- User stays here -->
             @break
         @endswitch
     @endauth
@@ -20,62 +23,28 @@
 
 @section('contents')
     @auth
-        <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Espace Étudiant</h1>
-        </div>
-
-        <!-- Content Row -->
-        <div class="row">
-            <!-- Absences Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-danger shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                    Mes Absences</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-exclamation-circle fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
+        @if(Auth::user()->type == 'etudiant')
+            <!-- Redirection automatique vers le dashboard étudiant -->
+            <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Chargement...</span>
                     </div>
+                    <p class="text-muted">Redirection vers votre espace étudiant...</p>
+                    <p class="small">
+                        <a href="{{ route('etudiant.home') }}" class="text-primary">Cliquez ici si la redirection ne fonctionne pas</a>
+                    </p>
                 </div>
             </div>
-
-            <!-- Cours Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Modules Inscrits</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">6</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-book fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
+        @else
+            <!-- Page pour les autres types d'utilisateurs (si nécessaire) -->
+            <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+                <div class="text-center">
+                    <h1 class="h3 mb-4">Bienvenue {{ Auth::user()->prenom }} {{ Auth::user()->nom }}</h1>
+                    <p class="text-muted">Redirection en cours...</p>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12 mb-4">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Mon Emploi du Temps</h6>
-                    </div>
-                    <div class="card-body">
-                        <p>Consultez votre emploi du temps et vos absences ici.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endif
     @endauth
 
     @guest

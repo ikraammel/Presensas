@@ -148,10 +148,10 @@ Route::middleware(['auth', 'is_enseignant'])->group(function () {
     Route::get('/enseignant/seances/{id}/pdf', [EnseignantController::class, 'generateFeuillePresence'])->name('enseignant.seances.pdf');
 
     // Enregistrement présence
-    Route::get('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'presenceManuelleForm'])->name('enseignant.presences.manuel');
-    Route::post('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'storePresenceManuelle'])->name('enseignant.presences.manuel');
-    Route::get('/enseignant/presences/{seanceId}/qr-code', [EnseignantController::class, 'presenceQRCodeForm'])->name('enseignant.presences.qr-code');
-    Route::post('/enseignant/presences/{seanceId}/qr-code/scan', [EnseignantController::class, 'scanQRCode'])->name('enseignant.presences.qr-code.scan');
+    Route::get('/enseignant/presences/{seanceId}', [EnseignantController::class, 'enregistrerPresence'])->name('enseignant.presences.index');
+    Route::get('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'enregistrerPresence'])->name('enseignant.presences.manuel');
+    Route::post('/enseignant/presences/{seanceId}/manuel', [EnseignantController::class, 'storePresenceManuelle'])->name('enseignant.presences.store');
+    Route::get('/enseignant/presences/{seanceId}/realtime', [EnseignantController::class, 'getPresencesRealtime'])->name('enseignant.presences.realtime');
     Route::get('/enseignant/presences/{seanceId}/nfc', [EnseignantController::class, 'presenceNFCForm'])->name('enseignant.presences.nfc');
     Route::post('/enseignant/presences/{seanceId}/nfc/scan', [EnseignantController::class, 'scanNFC'])->name('enseignant.presences.nfc.scan');
 
@@ -186,6 +186,10 @@ Route::middleware(['auth', 'is_etudiant'])->group(function () {
     Route::get('/etudiant/editMdp', [EtudiantController::class, 'editFormMdp'])->name('etudiant.account.edit');
     Route::post('/etudiant/editMdp', [EtudiantController::class, 'editMdp'])->name('etudiant.account.edit');
 
+    // Séances
+    Route::get('/etudiant/seances', [EtudiantController::class, 'mesSeances'])->name('etudiant.seances.index');
+    Route::get('/etudiant/seances/{id}', [EtudiantController::class, 'showSeance'])->name('etudiant.seances.show');
+
     // Justification d'absence
     Route::get('/etudiant/absences', [EtudiantController::class, 'mesAbsences'])->name('etudiant.absences.liste');
     Route::get('/etudiant/absences/{presence}/justifier', [EtudiantController::class, 'formJustificatif'])->name('etudiant.absences.justifier');
@@ -207,6 +211,9 @@ Route::middleware(['auth', 'is_gestionnaire'])->group(function () {
 });
 
 
+
+/*===================== Scan QR Code (Public) ===========================*/
+Route::post('/scan-qr', [EnseignantController::class, 'scanQRCode'])->name('scan.qr');
 
 /*===================== Login & Logout ===========================*/
 Route::get('/login', [AuthenticatedSessionController::class, 'showForm'])
