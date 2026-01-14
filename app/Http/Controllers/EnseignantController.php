@@ -27,8 +27,10 @@ class EnseignantController extends Controller
         $cours = $user->cours;
         $totalCours = $cours->count();
 
-        // Classes de l'enseignant
-        $groupes = Groupe::where('user_id', $user->id)->get();
+        // Classes de l'enseignant avec leurs étudiants
+        $groupes = Groupe::where('user_id', $user->id)
+            ->with('etudiants')
+            ->get();
         $totalClasses = $groupes->count();
 
         // Séances du jour
@@ -51,6 +53,7 @@ class EnseignantController extends Controller
             'user' => $user,
             'totalCours' => $totalCours,
             'totalClasses' => $totalClasses,
+            'groupes' => $groupes, // Passer les groupes à la vue
             'seancesAujourdhui' => $seancesAujourdhui,
             'totalSeancesAvenir' => $totalSeancesAvenir,
             'seancesAvenir' => $seancesAvenir,
@@ -259,5 +262,33 @@ class EnseignantController extends Controller
 
         $request->session()->flash('etat', 'Justificatif refusé.');
         return redirect()->back();
+    }
+
+    // Afficher toutes les classes assignées à l'enseignant
+    public function indexClasses()
+    {
+        $user = Auth::user();
+        $groupes = Groupe::where('user_id', $user->id)
+            ->with('etudiants')
+            ->get();
+
+        return view('enseignant.classes.index', [
+            'groupes' => $groupes,
+            'totalClasses' => $groupes->count(),
+        ]);
+    }
+
+    // Afficher les étudiants d'une classe
+    public function showClasseEtudiants($id)
+    {
+        $user = Auth::user();
+        $groupe = Groupe::where('id', $id)
+            ->where('user_id', $user->id)
+            ->with('etudiants')
+            ->firstOrFail();
+
+        return view('enseignant.classes.etudiants', [
+            'groupe' => $groupe,
+        ]);
     }
 }

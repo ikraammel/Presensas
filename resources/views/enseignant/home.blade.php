@@ -87,18 +87,72 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12 mb-4">
+        <!-- Classes assignées -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Mes Classes Assignées</h6>
+                    @if($totalClasses > 0)
+                        <a href="{{ route('enseignant.classes.index') }}" class="btn btn-sm btn-outline-primary">
+                            Voir toutes
+                        </a>
+                    @endif
+                </div>
+                <div class="card-body">
+                    @if($totalClasses > 0)
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nom de la classe</th>
+                                        <th>Étudiants</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($groupes as $groupe)
+                                        <tr>
+                                            <td>
+                                                <strong>{{ $groupe->nom }}</strong>
+                                                @if($groupe->description)
+                                                    <br><small class="text-muted">{{ $groupe->description }}</small>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ $groupe->etudiants->count() }} étudiant(s)</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('enseignant.classes.etudiants', $groupe->id) }}" 
+                                                   class="btn btn-sm btn-outline-primary" title="Voir les étudiants">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">Aucune classe assignée pour le moment.</p>
+                        <small class="text-muted">Les classes vous seront assignées par l'administrateur.</small>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Activité Récente -->
+        <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Activité Récente</h6>
                 </div>
                 <div class="card-body">
-                    <p>Bienvenue {{ $user->prenom }} {{ $user->nom }} dans votre espace enseignant.</p>
+                    <p>Bienvenue <strong>{{ $user->prenom }} {{ $user->nom }}</strong> dans votre espace enseignant.</p>
                     <h6>Séances à venir :</h6>
                     @forelse($seancesAvenir as $seance)
                         <p><strong>{{ $seance->cours->intitule }}</strong> - {{ \Carbon\Carbon::parse($seance->date_debut)->format('d/m/Y H:i') }}</p>
                     @empty
-                        <p>Aucune séance à venir.</p>
+                        <p class="text-muted">Aucune séance à venir.</p>
                     @endforelse
                     <div class="mt-3">
                         <a href="{{ route('enseignant.showSeance') }}" class="btn btn-primary btn-sm">Voir toutes les séances</a>

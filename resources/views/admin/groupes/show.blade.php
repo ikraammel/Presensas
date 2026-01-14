@@ -13,12 +13,40 @@
                 <div class="card-body">
                     <h4>{{ $groupe->nom }}</h4>
                     <p><strong>Professeur Principal :</strong> <br>
-                        {{ $groupe->user->nom ?? '' }} {{ $groupe->user->prenom ?? '' }}
+                        {{ $groupe->user->nom ?? 'Aucun' }} {{ $groupe->user->prenom ?? '' }}
                     </p>
                     <p><strong>Description :</strong> <br>
                         {{ $groupe->description ?? 'Aucune description' }}
                     </p>
-                    <a href="{{ route('admin.groupes.index') }}" class="btn btn-secondary btn-sm">Retour à la liste</a>
+
+                    <!-- Formulaire pour changer le professeur principal -->
+                    <hr>
+                    <form action="{{ route('admin.groupes.updateProfesseur', $groupe->id) }}" method="POST" class="mb-2">
+                        @csrf
+                        <div class="mb-2">
+                            <label for="user_id" class="form-label">Changer le professeur principal</label>
+                            <select name="user_id" id="user_id"
+                                    class="form-select form-select-sm @error('user_id') is-invalid @enderror">
+                                <option value="">-- Sélectionner un enseignant --</option>
+                                @foreach($enseignants as $enseignant)
+                                    <option value="{{ $enseignant->id }}"
+                                        {{ $groupe->user_id == $enseignant->id ? 'selected' : '' }}>
+                                        {{ $enseignant->nom }} {{ $enseignant->prenom }} ({{ $enseignant->login }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('user_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-arrow-repeat"></i> Mettre à jour le professeur
+                        </button>
+                    </form>
+
+                    <a href="{{ route('admin.groupes.index') }}" class="btn btn-secondary btn-sm mt-2">Retour à la liste</a>
                 </div>
             </div>
 

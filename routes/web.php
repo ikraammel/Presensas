@@ -73,6 +73,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     ]);
     Route::post('/admin/classes/{id}/add-student', [\App\Http\Controllers\GroupeController::class, 'addEtudiant'])->name('admin.groupes.addEtudiant');
     Route::post('/admin/classes/{id}/remove-student/{etudiant_id}', [\App\Http\Controllers\GroupeController::class, 'removeEtudiant'])->name('admin.groupes.removeEtudiant');
+    Route::post('/admin/classes/{id}/update-professeur', [\App\Http\Controllers\GroupeController::class, 'updateProfesseur'])->name('admin.groupes.updateProfesseur');
 
     Route::get('/admin/user/addAdmin', [UserController::class, 'addUserForm'])->name('admin.user.createAdmin');
     Route::post('/admin/user/addAdmin', [UserController::class, 'addUserAdmin'])->name('admin.user.createAdmin');

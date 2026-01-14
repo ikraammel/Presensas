@@ -48,7 +48,10 @@ class GroupeController extends Controller
         // Ici on liste ceux qui n'ont PAS de groupe pour faciliter l'ajout
         $etudiantsSansGroupe = Etudiants::whereNull('groupe_id')->get();
 
-        return view('admin.groupes.show', compact('groupe', 'etudiantsSansGroupe'));
+        // Liste des enseignants pour pouvoir changer le professeur principal
+        $enseignants = User::where('type', 'enseignant')->get();
+
+        return view('admin.groupes.show', compact('groupe', 'etudiantsSansGroupe', 'enseignants'));
     }
 
     // Ajoute un étudiant à la classe
@@ -93,5 +96,32 @@ class GroupeController extends Controller
 
         return redirect()->route('admin.groupes.index')
             ->with('etat', 'Classe supprimée');
+    }
+
+    // Changer le professeur principal de la classe
+    public function updateProfesseur(Request $request, $id)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $groupe = Groupe::findOrFail($id);
+
+        // Vérifier que l'utilisateur est bien un enseignant
+        $enseignant = User::where('id', $request->user_id)
+            ->where('type', 'enseignant')
+            ->first();
+
+        if (!$enseignant) {
+            return back()->withErrors([
+                'user_id' => 'L\'utilisateur sélectionné n\'est pas un enseignant.',
+            ])->withInput();
+        }
+
+        $groupe->user_id = $enseignant->id;
+        $groupe->save();
+
+        return redirect()->route('admin.groupes.show', $id)
+            ->with('etat', 'Professeur principal mis à jour avec succès');
     }
 }

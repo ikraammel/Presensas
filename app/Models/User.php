@@ -33,6 +33,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Cours::class, 'cours_users', 'user_id', 'cours_id');
     }
 
+    public function groupes()
+    {
+        return $this->hasMany(Groupe::class, 'user_id');
+    }
+
     public function isAdmin()
     {
         return $this->type == 'admin';
