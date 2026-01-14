@@ -100,7 +100,7 @@
 
             <!-- Hero Image / Visual -->
             <div class="col-lg-6 text-center">
-                <img src="{{ asset('Images/home_page.jpg') }}" alt="School Management" class="img-fluid rounded-3 shadow-lg" style="max-height: 400px; object-fit: cover;">
+                <img src="{{ asset('Images/home_page.png') }}" alt="School Management" class="img-fluid rounded-3 shadow-lg" style="max-height: 400px; object-fit: cover;">
             </div>
 
         </div>

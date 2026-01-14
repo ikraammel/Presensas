@@ -306,4 +306,85 @@ class EnseignantController extends Controller
             'groupe' => $groupe,
         ]);
     }
+
+    // Formulaire de scan QR Code pour une séance
+    public function presenceQRCodeForm($seanceId)
+    {
+        $seance = Seances::with('cours')->findOrFail($seanceId);
+        return view('enseignant.presences.scan', compact('seance'));
+    }
+
+    // Traitement du scan QR (AJAX)
+    public function scanQRCode(Request $request)
+    {
+        $request->validate([
+            'seance_id' => 'required|exists:seances,id',
+            'noet' => 'required|exists:etudiants,noet'
+        ]);
+
+        $seance = Seances::findOrFail($request->seance_id);
+        $etudiant = Etudiants::where('noet', $request->noet)->firstOrFail();
+
+        // Vérifier si déjà présent
+        $exists = Presences::where('seance_id', $seance->id)
+            ->where('etudiant_id', $etudiant->id)
+            ->exists();
+
+        if ($exists) {
+            // Si déjà noté, on considère succès (neutre)
+            return response()->json([
+                'success' => false,
+                'message' => 'Étudiant déjà noté présent.'
+            ]);
+        }
+
+        // Marquer présent
+        Presences::create([
+            'seance_id' => $seance->id,
+            'etudiant_id' => $etudiant->id,
+            'statut' => 'present',
+            'date_enregistrement' => now(),
+            'statut_justificatif' => null
+        ]);
+        
+        // Attacher si besoin via relation (optionnel si Presences est la table pivot)
+        // $seance->etudiants()->attach($etudiant->id, ['statut' => 'present', 'date_enregistrement' => now()]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Présence enregistrée pour ' . $etudiant->prenom . ' ' . $etudiant->nom
+        ]);
+    }
+
+    // Générer la feuille de présence PDF
+    public function generateFeuillePresence($seanceId)
+    {
+        $seance = Seances::with(['cours', 'etudiants'])->findOrFail($seanceId);
+        
+        // Récupérer les présences explicitement pour avoir les détails (si via pivot c'est bon)
+        // Mais $seance->etudiants vient du belongsToMany qui peut ne pas inclure ceux qui ne sont PAS là si on ne l'a pas configuré pour tout le monde.
+        // En général une feuille de présence liste TOUS les étudiants du groupe, avec leur statut.
+        
+        // On doit récupérer le groupe associé au cours/séance
+        // La séance -> cours -> groupes (si ManyToMany) ou étudiants directs?
+        // Le modèle actuel semble lier Etudiants au Groupe, et le Groupe au Cours (ou User -> Groupe -> User).
+        
+        // Simplification : On liste les étudiants du ou des groupes associés à l'enseignant pour ce cours.
+        // Ou plus simple : on suppose que la séance a des étudiants "attendus".
+        
+        // Pour l'instant, on liste les présences enregistrées ET on essaie de lister les absents si on a la liste de la classe.
+        // On va faire simple : PDF des PRÉSENTS pour l'instant, ou liste complète si on peut déduire la classe.
+        
+        // Récupérer les groupes du prof
+        $user = Auth::user();
+        $groupes = Groupe::where('user_id', $user->id)->with('etudiants')->get();
+        // Filtrer les étudiants qui devraient être là ? Difficile sans lien Cours-Groupe explicite dans la séance.
+        // On va prendre tous les étudiants des groupes du prof comme base, ou juste les présents.
+        // Le mieux est de lister ceux qui ont pointé.
+        
+        $presences = Presences::where('seance_id', $seance->id)->with('etudiants')->get();
+        
+        $pdf = \PDF::loadView('enseignant.seances.pdf_presence', compact('seance', 'presences'));
+        return $pdf->stream('feuille-presence-' . $seance->id . '.pdf');
+    }
 }

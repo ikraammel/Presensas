@@ -139,4 +139,13 @@ class EtudiantController extends Controller
 
         return view('etudiant.modules.show', compact('cours'));
     }
+
+    // Afficher le QR Code de l'étudiant
+    public function showQRCode()
+    {
+        $user = Auth::user();
+        $etudiant = \App\Models\Etudiants::where('nom', $user->nom)->where('prenom', $user->prenom)->firstOrFail();
+
+        return view('etudiant.qrcode', compact('etudiant'));
+    }
 }
